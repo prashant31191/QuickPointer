@@ -1,2 +1,3 @@
 QuickPointer
 ============
+Some changes
