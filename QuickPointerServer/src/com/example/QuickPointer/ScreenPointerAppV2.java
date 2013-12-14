@@ -1,12 +1,13 @@
-package com.example.QuickPointerApp;
+package com.example.QuickPointer;
 
 import java.io.IOException;
 
-import com.example.QuickPointerApp.net.UDPServer;
+import com.example.QuickPointer.net.ServerI;
+import com.example.QuickPointer.net.UDPServer;
 
 public class ScreenPointerAppV2 {
 	public static void main(String[] args) throws IOException{
-		int portNumber = UDPServer.DEFAULTPORT;
+		int portNumber = ServerI.DEFAULT_PORT;
 		
 		if (args.length == 0) {
 	    	System.out.println("Run with default port "+portNumber);
@@ -25,7 +26,7 @@ public class ScreenPointerAppV2 {
 	        }
 	    });
 	    
-	    final UDPServer server = new UDPServer(portNumber);
+	    final UDPServer server = new UDPServer();
 	    
 		server.setOnDataReceiveListener(new UDPServer.OnDataReceiveListener(){
 

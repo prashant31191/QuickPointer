@@ -1,4 +1,4 @@
-package com.example.QuickPointerApp;
+package com.example.QuickPointer;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;

@@ -1,4 +1,4 @@
-package com.example.QuickPointerApp;
+package com.example.QuickPointer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;

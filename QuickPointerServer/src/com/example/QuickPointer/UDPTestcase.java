@@ -1,9 +1,11 @@
-package com.example.QuickPointerApp;
+package com.example.QuickPointer;
 
 import java.io.IOException;
 
-import com.example.QuickPointerApp.net.UDPClient;
-import com.example.QuickPointerApp.net.UDPServer;
+import com.example.QuickPointer.net.ClientI;
+import com.example.QuickPointer.net.ServerI;
+import com.example.QuickPointer.net.UDPClient;
+import com.example.QuickPointer.net.UDPServer;
 
 public class UDPTestcase {
 
@@ -17,8 +19,9 @@ public class UDPTestcase {
 		UDPTestcase instance = new UDPTestcase();
 		
 		
-		UDPClient client = new UDPClient(UDPClient.DEFAULTPORT);
-		server = new UDPServer(UDPServer.DEFAULTPORT);
+		UDPClient client = new UDPClient();
+		server = new UDPServer();
+		server.setPort(ServerI.DEFAULT_PORT);
 		
 		final String testMsg = "t";
 		
@@ -35,7 +38,7 @@ public class UDPTestcase {
 			}
 		});
 		
-		System.out.println("Server starting");
+		System.out.println("Server starting...");
 		server.start();
 		try {
 			Thread.sleep(1000);
@@ -44,8 +47,13 @@ public class UDPTestcase {
 		}
 		
 		System.out.println("Connecting...");
-		client.connect("localhost", UDPServer.DEFAULTPORT);
-		System.out.println("Connected.");
+		client.connect("localhost", ServerI.DEFAULT_PORT);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			return;
+		}
 		
 		System.out.println("Packet sending...");
 		client.send(testMsg);
@@ -55,7 +63,9 @@ public class UDPTestcase {
 		} catch (InterruptedException e) {
 			return;
 		}
+		
 		server.stop();
+		client.close();
 		System.out.println("Server stopped. End");
 	}
 

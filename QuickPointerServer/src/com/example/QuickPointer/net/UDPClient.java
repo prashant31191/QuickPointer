@@ -1,4 +1,4 @@
-package com.example.QuickPointerApp.net;
+package com.example.QuickPointer.net;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -6,26 +6,23 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class UDPClient {
+public class UDPClient implements ClientI{
 	protected DatagramSocket socket;
-	public static final int DEFAULTPORT = 10000;
-	private static final int PACKETSIZE = 64;
 	private Thread send;
 	private Thread connect;
 	
-	public UDPClient(int port) throws IOException{
-		if(port <1 || port>65535){
-			System.err.println("UDPServer: port out of range");
-			throw new IOException("port out of range");
-		}
-		socket = new DatagramSocket(port);
+	public UDPClient() throws IOException{
+		//random available socket
+		socket = new DatagramSocket();
 	}
 	
+	@Override
 	public void connect(String host, int port){
 		connect = new Thread(new Connect(host,port));
 		connect.start();
 	}
 	
+	@Override
 	public synchronized void send(String msg){
 		if(send==null || !send.isAlive()){
 			send = new Thread(new SendMessage(msg));
@@ -34,11 +31,9 @@ public class UDPClient {
 	}
 	
 	private OnConnectedListener onConnected;
-	public void setOnDataReceiveListener(OnConnectedListener onConnected){
+	@Override
+	public void setOnConnectedListener(OnConnectedListener onConnected){
 		this.onConnected = onConnected;
-	}
-	public interface OnConnectedListener {
-		public void onConnected(Object args);
 	}
 	
 	private class Connect implements Runnable{
@@ -75,18 +70,18 @@ public class UDPClient {
 					System.out.println("msg:"+msg);
 
 					byte[] tbuf = msg.getBytes();
-					byte[] buf = new byte[PACKETSIZE];
+					byte[] buf = new byte[UDPProtocol.PACKET_SIZE];
 
-					if(tbuf.length>PACKETSIZE){
+					if(tbuf.length>UDPProtocol.PACKET_SIZE){
 						//trim extra bytes
 						//TODO error handle
-						System.arraycopy(tbuf, 0, buf, 0, PACKETSIZE);
+						System.arraycopy(tbuf, 0, buf, 0, UDPProtocol.PACKET_SIZE);
 					}else{
 						//put the msg on the right side of the byte array
-						System.arraycopy(tbuf, 0, buf, PACKETSIZE - tbuf.length, tbuf.length);
+						System.arraycopy(tbuf, 0, buf, UDPProtocol.PACKET_SIZE - tbuf.length, tbuf.length);
 					}
 										
-					DatagramPacket p = new DatagramPacket(buf,PACKETSIZE);
+					DatagramPacket p = new DatagramPacket(buf,UDPProtocol.PACKET_SIZE);
 					
 					socket.send(p); //block
 					
@@ -97,6 +92,17 @@ public class UDPClient {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	public void close(){
+		Thread stop = new Thread(new Stop());
+		stop.start();
+	}
+	private class Stop implements Runnable{
+		@Override
+		public void run() {
+			socket.close();			
 		}
 	}
 }

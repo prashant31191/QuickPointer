@@ -1,4 +1,4 @@
-package com.example.quickpointerclient;
+package com.example.QuickPointer.android;
 
 import java.io.BufferedReader;
 import java.io.IOException;

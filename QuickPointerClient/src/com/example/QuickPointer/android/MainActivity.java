@@ -1,9 +1,13 @@
-package com.example.quickpointerclient;
+package com.example.QuickPointer.android;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import com.example.QuickPointerApp.net.UDPClient;
+import com.example.QuickPointer.net.ClientI;
+import com.example.QuickPointer.net.ServerI;
+import com.example.QuickPointer.net.TCPClient;
+import com.example.QuickPointer.net.UDPClient;
+import com.example.quickpointerclient.R;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -36,13 +40,10 @@ public class MainActivity extends Activity {
 
 	private static final String TAG = "MainActivity";
 	
-	private static enum Mode{TCP, UDP, ANDROID_UDP};
+	private static enum Mode{TCP, UDP};
 	private Mode mode = Mode.UDP;
 	
-	private Client client;
-	private UDPAndroidClient uClient;
-	private UDPClient udpClient;
-	private final int port = 9999;
+	private ClientI client;
 	SeekBar barX, barY;
 	
 	private SensorManager mSensorManager;
@@ -78,26 +79,22 @@ public class MainActivity extends Activity {
 				String hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
 				switch(mode){
 				case TCP:
-					client = new Client(hostName,port);
-					client.connectHost();
-					break;
-				case ANDROID_UDP:
-					try {
-						uClient = new UDPAndroidClient(hostName,port);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					client = new TCPClient();
 					break;
 				case UDP:
 					try {
-						udpClient = new UDPClient(UDPClient.DEFAULTPORT);
-						udpClient.connect(hostName, port);
+						client = new UDPClient();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					break;
+				default:
+					Log.e(TAG, "Wrong operation mode!");
+					System.exit(1);
 				}
+				
+				client.connect(hostName, ServerI.DEFAULT_PORT);
 			}
 		});
 		
@@ -292,26 +289,8 @@ public class MainActivity extends Activity {
 	}
 	
 	public void sendCoordinateMessage(int x,int y){
-		switch(mode){
-		case TCP:
-			if(client!=null && !client.isError()){
-				client.sendMessage("A"+x+","+y);
-			}
-			break;
-		case ANDROID_UDP:
-			if(uClient!=null){
-				try {
-					uClient.send("A"+x+","+y);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			break;
-		case UDP:
-			if(udpClient!=null){
-				udpClient.send("A"+x+","+y);
-			}
+		if(client!=null){
+			client.send("A"+x+","+y);
 		}
 	}
 }
