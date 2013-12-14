@@ -1,5 +1,10 @@
 package com.example.quickpointerclient;
 
+import java.io.IOException;
+import java.util.UUID;
+
+import com.example.QuickPointerApp.net.UDPClient;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -8,7 +13,14 @@ import android.os.Bundle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,11 +29,19 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
 
+	private static final String TAG = "MainActivity";
+	
+	private static enum Mode{TCP, UDP, ANDROID_UDP};
+	private Mode mode = Mode.UDP;
+	
 	private Client client;
+	private UDPAndroidClient uClient;
+	private UDPClient udpClient;
 	private final int port = 9999;
 	SeekBar barX, barY;
 	
@@ -29,27 +49,96 @@ public class MainActivity extends Activity {
 	private Sensor mSensor;
 	
 	protected TextView textX, textY, textZ;
-	protected Button bindBtn;
+	protected Button bindBtn, connectBtn;
 	private boolean isBinded =false;
 	
 	protected int systemDimX = 800, systemDimY = 600;
-		
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		Log.d(TAG,"onCreate..");
+		
 		barX = (SeekBar)findViewById(R.id.seekBar1);
-		barX.setMax(systemDimX);
 		barY = (SeekBar)findViewById(R.id.seekBar2);
-		barY.setMax(systemDimY);
-		final Button connectBtn = (Button) findViewById(R.id.ConnectBtn); 
+		connectBtn = (Button) findViewById(R.id.ConnectBtn); 
 		textX = (TextView) findViewById(R.id.TextX);
 		textY = (TextView) findViewById(R.id.TextY);
 		textZ = (TextView) findViewById(R.id.TextZ);
 		bindBtn = (Button) findViewById(R.id.bindBtn);
+		btBtn = (Button) findViewById(R.id.blueToothBtn);
 		
+		connectBtn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				String hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
+				switch(mode){
+				case TCP:
+					client = new Client(hostName,port);
+					client.connectHost();
+					break;
+				case ANDROID_UDP:
+					try {
+						uClient = new UDPAndroidClient(hostName,port);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				case UDP:
+					try {
+						udpClient = new UDPClient(UDPClient.DEFAULTPORT);
+						udpClient.connect(hostName, port);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		initializeSeekBarControl();
+		
+		//initialize bluetooth button and adapter
+		initializeBlueTooth();
+	    
+	}// end of onCreate
+	
+//Seekbar - coordinate control by orientation sensor
+	//change seekbar attributes by sensor
+	private SensorBindListener sensorBindListener = new SensorBindListener();
+	
+	// Show x,y,z results on a textview
+	private MySensorEventListener seListener = new MySensorEventListener();
+	
+	//send cooridinate information to server from seekbar result
+	private OnSeekBarChangeListener onSeekBarChangeListener = new OnSeekBarChangeListener(){
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			sendCoordinateMessage(barX.getProgress(),barY.getProgress());
+		}
+	};
+	
+	private void initializeSeekBarControl(){
+		barX.setMax(systemDimX);
+		barY.setMax(systemDimY);
+		barX.setOnSeekBarChangeListener(onSeekBarChangeListener);
+		barY.setOnSeekBarChangeListener(onSeekBarChangeListener);
+		
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		
+		//bind the seekbar control to the client socket
 		bindBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -67,49 +156,8 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-		
-		connectBtn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				String hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
-				client = new Client(hostName,port);
-				client.onSocketConnectedListener = new Client.OnSocketConnectedListener(){
-					@Override
-					public void onSocketConnected(int ret) {
-						//TODO get system dimension information systemDimX & systemDimY
-						if(ret==0){
-							showAlert();
-						}
-					}
-				};
-				client.connectHost();
-			}
-			
-		});
-		
-		barX.setOnSeekBarChangeListener(onSeekBarChangeListener);
-		barY.setOnSeekBarChangeListener(onSeekBarChangeListener);
-		
-		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 	}
 	
-	//Seekbar event listener
-	private OnSeekBarChangeListener onSeekBarChangeListener = new OnSeekBarChangeListener(){
-		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {}
-
-		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {}
-
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) {
-			sendCoordinateMessage(barX.getProgress(),barY.getProgress());
-		}
-	};//End of Seekbar event listener
-	
-	//Orientation Event listener
 	class MySensorEventListener implements SensorEventListener{
 		@Override
 		public void onAccuracyChanged(Sensor arg0, int arg1) {return;}
@@ -128,7 +176,6 @@ public class MainActivity extends Activity {
 		    textZ.setText(String.valueOf(roll_angle));
 		}
 	}
-	private MySensorEventListener seListener = new MySensorEventListener();
 	
 	class SensorBindListener implements SensorEventListener{
 		public float threshold = 8.0f;
@@ -152,7 +199,61 @@ public class MainActivity extends Activity {
 		    sendCoordinateMessage(x,y);
 		}
 	}
-	private SensorBindListener sensorBindListener = new SensorBindListener();
+	
+//End of Seekbar
+	
+//Bluetooth related
+	private static final String TAG_bt = "BlueTooth";
+	String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
+	String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
+	BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+	static final String serverUUID = "11111111111111111111111111111123";
+	
+	// bluetooth connection Button
+	protected Button btBtn;
+	private void initializeBlueTooth(){
+		btBtn.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				// Run the bluetooth setup
+				bluetooth.enable();
+				if(!bluetooth.isDiscovering()){
+					Log.d(TAG_bt,"Start searching other bluetooth devices.");
+					bluetooth.startDiscovery();
+				}
+			}
+			
+		});
+		
+	    BroadcastReceiver discoveryResult = new BroadcastReceiver(){
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.d(TAG_bt,"Action founded, start showing the results.");
+	            String remoteDeviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
+	            BluetoothDevice remoteDevice;
+
+	            remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+	            Log.i("@#$%^&*(*&^%$#@#$%^&*(", "WYSWIETLAM");
+	            Toast.makeText(getApplicationContext(), "Discovered: " + remoteDeviceName + " address " + remoteDevice.getAddress(), Toast.LENGTH_SHORT).show();
+
+	            try{
+	                BluetoothDevice device = bluetooth.getRemoteDevice(remoteDevice.getAddress());
+	                BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(serverUUID));
+	                clientSocket.connect();
+
+	            } catch (IOException e) {
+	                Log.e(TAG_bt, e.getMessage());
+	            }
+			}
+	    };
+
+	    registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+	}
+//End of bluetooth related
+	
+//Orientation Event listener
+
 	
 	private boolean isBindRegistered = false;
 	public void bindSensorWithSeekBar(){
@@ -191,27 +292,26 @@ public class MainActivity extends Activity {
 	}
 	
 	public void sendCoordinateMessage(int x,int y){
-		if(client!=null && !client.isError()){
-			client.sendMessage("A"+x+","+y);
+		switch(mode){
+		case TCP:
+			if(client!=null && !client.isError()){
+				client.sendMessage("A"+x+","+y);
+			}
+			break;
+		case ANDROID_UDP:
+			if(uClient!=null){
+				try {
+					uClient.send("A"+x+","+y);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			break;
+		case UDP:
+			if(udpClient!=null){
+				udpClient.send("A"+x+","+y);
+			}
 		}
 	}
-	public void showAlert(){
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				this);
- 
-		// set title
-		alertDialogBuilder.setTitle("Connected");
- 
-		// set dialog message
-		//alertDialogBuilder
-		//	.setMessage("Click yes to exit!")
-		//	.setCancelable(false);
- 
-		// create alert dialog
-		AlertDialog alertDialog = alertDialogBuilder.create();
- 
-		// show it
-		alertDialog.show();	
-	}
-
 }

@@ -1,4 +1,4 @@
-package com.example.QuickPointerApp;
+package com.example.QuickPointerApp.net;
 
 
 import java.awt.event.ActionEvent;
@@ -13,9 +13,9 @@ import java.net.UnknownHostException;
 
 //Java console client for testing
 
-public class Client{
+public class TCPClient{
 
-	public Client(String host,int port){
+	public TCPClient(String host,int port){
 		setHost(host);
 		setPort(port);
 	}

@@ -29,9 +29,14 @@ public class ScreenPointerApp {
 			isRunning = true;
 		}
 		
+		int portNumber = 9999;
 	    //server side
-	    if (args.length != 1) {
-	        System.err.println("Usage: java EchoServer <port number>");
+	    if (args.length == 0) {
+	    	System.out.println("Run with default arg: port 9999");
+	    }else if(args.length ==1){
+	    	portNumber = Integer.parseInt(args[0]);
+	    }else{
+	    	System.err.println("Usage: java EchoServer <port number>");
 	        System.exit(1);
 	    }
 	 
@@ -44,7 +49,6 @@ public class ScreenPointerApp {
 	        }
 	    });
 	    
-	    int portNumber = Integer.parseInt(args[0]);
 	    try{ 
 	    	ServerSocket serverSocket = new ServerSocket(portNumber);
 	        Socket clientSocket = serverSocket.accept();

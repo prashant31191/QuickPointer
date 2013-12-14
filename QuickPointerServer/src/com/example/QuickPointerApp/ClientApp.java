@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.example.QuickPointerApp.net.TCPClient;
+
 
 public class ClientApp {
 	public static void main(String[] args) throws IOException {
@@ -25,7 +27,7 @@ public class ClientApp {
         
         BufferedReader stdIn =
                 new BufferedReader(new InputStreamReader(System.in));
-        final Client client = new Client(hostName,portNumber);
+        final TCPClient client = new TCPClient(hostName,portNumber);
 		client.messageReceived= new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {

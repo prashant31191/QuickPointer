@@ -2,5 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/smallcampus/workspace/Android/QuickPointerW/git/QuickPointer/QuickPointerServer/lib/bluecove-2.1.0.jar"/>
+	<classpathentry kind="lib" path="/home/smallcampus/workspace/Android/QuickPointerW/git/QuickPointer/QuickPointerServer/lib/bluecove-gpl-2.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

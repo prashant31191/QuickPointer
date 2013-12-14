@@ -14,6 +14,19 @@
         android:orientation="vertical"
         android:padding="20dp" >
 
+        <Button
+            android:id="@+id/blueToothBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BlueToothConnect" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IP address"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
         <EditText
             android:id="@+id/editText1"
             android:layout_width="match_parent"
