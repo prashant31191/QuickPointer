@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class UDPClient implements ClientI{
+public class UDPClient{
 	protected DatagramSocket socket;
 	private Thread send;
 	private Thread connect;
@@ -16,13 +16,11 @@ public class UDPClient implements ClientI{
 		socket = new DatagramSocket();
 	}
 	
-	@Override
 	public void connect(String host, int port){
 		connect = new Thread(new Connect(host,port));
 		connect.start();
 	}
 	
-	@Override
 	public synchronized void send(String msg){
 		if(send==null || !send.isAlive()){
 			send = new Thread(new SendMessage(msg));
@@ -31,7 +29,6 @@ public class UDPClient implements ClientI{
 	}
 	
 	private OnConnectedListener onConnected;
-	@Override
 	public void setOnConnectedListener(OnConnectedListener onConnected){
 		this.onConnected = onConnected;
 	}
@@ -68,22 +65,8 @@ public class UDPClient implements ClientI{
 				try {
 					System.out.println("Starting pharsing msg...");
 					System.out.println("msg:"+msg);
-
-					byte[] tbuf = msg.getBytes();
-					byte[] buf = new byte[UDPProtocol.PACKET_SIZE];
-
-					if(tbuf.length>UDPProtocol.PACKET_SIZE){
-						//trim extra bytes
-						//TODO error handle
-						System.arraycopy(tbuf, 0, buf, 0, UDPProtocol.PACKET_SIZE);
-					}else{
-						//put the msg on the right side of the byte array
-						System.arraycopy(tbuf, 0, buf, UDPProtocol.PACKET_SIZE - tbuf.length, tbuf.length);
-					}
-										
-					DatagramPacket p = new DatagramPacket(buf,UDPProtocol.PACKET_SIZE);
-					
-					socket.send(p); //block
+															
+					socket.send(UDPProtocol.compilePacket(msg)); //block
 					
 					System.out.println("packet sended. length:"+msg.length());
 

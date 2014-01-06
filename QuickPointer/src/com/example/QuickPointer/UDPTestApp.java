@@ -2,12 +2,11 @@ package com.example.QuickPointer;
 
 import java.io.IOException;
 
-import com.example.QuickPointer.net.ClientI;
-import com.example.QuickPointer.net.ServerI;
+import com.example.QuickPointer.net.OnDataReceiveListener;
 import com.example.QuickPointer.net.UDPClient;
 import com.example.QuickPointer.net.UDPServer;
 
-public class UDPTestcase {
+public class UDPTestApp {
 
 	/**
 	 * @param args
@@ -16,19 +15,14 @@ public class UDPTestcase {
 	static UDPServer server;
 	
 	public static void main(String[] args) throws IOException {
-		UDPTestcase instance = new UDPTestcase();
-		
-		
 		UDPClient client = new UDPClient();
-		server = new UDPServer();
-		server.setPort(ServerI.DEFAULT_PORT);
+		server = new UDPServer(Config.DEFAULT_UDP_SERVER_PORT);
 		
 		final String testMsg = "t";
 		
-		server.setOnDataReceiveListener(new UDPServer.OnDataReceiveListener(){
+		server.setOnDataReceiveListener(new OnDataReceiveListener(){
 			@Override
-			public void onReceive(Object args) {
-				String msg = (String) args;
+			public void onReceive(String msg) {
 				System.out.println("Data Received. msg:\""+msg+"\"");
 				if(msg.equals(testMsg)){
 					System.out.println("Test Result: sucess");
@@ -47,7 +41,7 @@ public class UDPTestcase {
 		}
 		
 		System.out.println("Connecting...");
-		client.connect("localhost", ServerI.DEFAULT_PORT);
+		client.connect("localhost", Config.DEFAULT_UDP_SERVER_PORT);
 		
 		try {
 			Thread.sleep(1000);
@@ -67,6 +61,6 @@ public class UDPTestcase {
 		server.stop();
 		client.close();
 		System.out.println("Server stopped. End");
+		System.out.println("the SocketExceoption is created in purpose");
 	}
-
 }

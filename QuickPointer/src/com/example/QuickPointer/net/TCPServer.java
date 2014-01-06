@@ -7,8 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPServer implements ServerI{
-	private int port = ServerI.DEFAULT_PORT;
+public class TCPServer{
+	private int port;
 	private boolean isStarted = false;
 	protected ServerSocket serverSocket;
 	protected Socket clientSocket;
@@ -16,7 +16,10 @@ public class TCPServer implements ServerI{
 	public BufferedReader in;
 	private Thread server;
 	
-	@Override
+	public TCPServer(int port){
+		setPort(port);
+	}
+	
 	public void start(){
 		if(serverSocket==null){
 			isStarted = true;
@@ -25,9 +28,8 @@ public class TCPServer implements ServerI{
 			server.start();
 		}
 	}
-	@Override
 	public void setPort(int port) { this.port = port;}
-	@Override
+	
 	public void stop() {
 		if(serverSocket!=null){
 			isStarted = false;
@@ -38,7 +40,6 @@ public class TCPServer implements ServerI{
 	}
 	
 	private OnDataReceiveListener onReceive;
-	@Override
 	public void setOnDataReceiveListener(OnDataReceiveListener onReceive) {
 		this.onReceive = onReceive;
 	}
@@ -51,9 +52,10 @@ public class TCPServer implements ServerI{
 				
 		    	serverSocket = new ServerSocket(port);
 		        clientSocket = serverSocket.accept();
-		        PrintWriter out =
+		        
+		        out =
 		            new PrintWriter(clientSocket.getOutputStream(), true);
-		        BufferedReader in = new BufferedReader(
+		        in = new BufferedReader(
 		            new InputStreamReader(clientSocket.getInputStream()));
 		        
 		        while (isStarted && (inputLine = in.readLine()) != null) {
@@ -69,15 +71,16 @@ public class TCPServer implements ServerI{
 		}
 	}
 	
+	
+	
 	private class StopServer implements Runnable{
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			try {
+				//!! will generate non-handled exception in another thread 
 				clientSocket.close();
 				serverSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

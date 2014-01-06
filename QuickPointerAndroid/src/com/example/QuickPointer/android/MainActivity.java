@@ -3,10 +3,9 @@ package com.example.QuickPointer.android;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.example.QuickPointer.net.ClientI;
-import com.example.QuickPointer.net.ServerI;
 import com.example.QuickPointer.net.TCPClient;
 import com.example.QuickPointer.net.UDPClient;
+import com.example.QuickPointer.Config;
 import com.example.quickpointerclient.R;
 
 import android.hardware.Sensor;
@@ -14,9 +13,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -43,7 +40,7 @@ public class MainActivity extends Activity {
 	private static enum Mode{TCP, UDP};
 	private Mode mode = Mode.UDP;
 	
-	private ClientI client;
+	private UDPClient client;
 	SeekBar barX, barY;
 	
 	private SensorManager mSensorManager;
@@ -55,7 +52,6 @@ public class MainActivity extends Activity {
 	
 	protected int systemDimX = 800, systemDimY = 600;
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,24 +73,14 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				String hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
-				switch(mode){
-				case TCP:
-					client = new TCPClient();
-					break;
-				case UDP:
-					try {
-						client = new UDPClient();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					break;
-				default:
-					Log.e(TAG, "Wrong operation mode!");
-					System.exit(1);
+				try {
+					client = new UDPClient();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
-				client.connect(hostName, ServerI.DEFAULT_PORT);
+				client.connect(hostName, Config.DEFAULT_UDP_SERVER_PORT);
 			}
 		});
 		

@@ -1,7 +1,6 @@
 package com.example.QuickPointer.net;
 
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,13 +8,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 //Java console client for testing
 
-public class TCPClient implements ClientI{
+public class TCPClient{
 	
     protected Socket socket;
     public PrintWriter out;
@@ -35,20 +31,17 @@ public class TCPClient implements ClientI{
     	}
     }
     
-    @Override
     public void close()
     {
     	Thread stop = new Thread(new Stop());
     	stop.start();
     }
 
-	@Override
 	public void connect(String host, int port) {
 		Thread con = new Thread(new Connect(host,port));
 		con.start();
 	}
 	
-	@Override
 	public void send(String msg) {
     	if(sendNReceive!=null && sendNReceive.isAlive()){
     		System.out.println("Error: Thread is still running, msg skipeed.");
@@ -59,7 +52,6 @@ public class TCPClient implements ClientI{
 	}
 	
 	OnConnectedListener onConnected;
-	@Override
 	public void setOnConnectedListener(OnConnectedListener onConnected) {
 		this.onConnected = onConnected;
 	}
@@ -88,6 +80,10 @@ public class TCPClient implements ClientI{
 		}
 	}
 	
+	protected OnDataReceiveListener onDataReceiveListener;
+	public void setOnDataReceiveListener(OnDataReceiveListener listener){
+		this.onDataReceiveListener = listener;
+	}
 	private class MessageSendNReceive implements Runnable{
 		String fromUser;
 		
@@ -97,11 +93,14 @@ public class TCPClient implements ClientI{
 		public void run() {
 			if(socket!=null && out!=null && socket.isConnected()){
 				out.println(fromUser);
-//				try {
-//					messageReceived.actionPerformed(new ActionEvent(this,0,in.readLine()));
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
+				
+				if(onDataReceiveListener!=null){
+					try {
+						onDataReceiveListener.onReceive(in.readLine());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

@@ -1,14 +1,11 @@
-package com.example.QuickPointer;
+package com.example.QuickPointer.ui;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
-public class QuickPointer {
+public class QuickPointerBaseFrame {
 
 	   protected JFrame frame;
 	   public Dimension sysDim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -27,7 +24,7 @@ public class QuickPointer {
 	        frame.setAlwaysOnTop(true);
 	        
 	        //transparent background
-	        frame.setBackground(new Color(1.0f,1.0f,1.0f,0));
+	        frame.setBackground(new Color(0,0,0,0));
 	        
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	         	 
