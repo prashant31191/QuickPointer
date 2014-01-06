@@ -1,8 +1,11 @@
+/.metadata
+/metadata
 *.class
+*~
 
 # Package Files #
 *.jar
 *.war
 *.ear
-*~
-.metadata
+
+
