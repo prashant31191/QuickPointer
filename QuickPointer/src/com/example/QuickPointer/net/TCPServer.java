@@ -20,6 +20,7 @@ public class TCPServer{
 		setPort(port);
 	}
 	
+	public boolean isStarted(){return isStarted;}
 	public void start(){
 		if(serverSocket==null){
 			isStarted = true;
@@ -44,6 +45,20 @@ public class TCPServer{
 		this.onReceive = onReceive;
 	}
 	
+	public void send(String msg){
+		Thread send = new Thread(new Send(msg));
+		send.start();
+	}
+	
+	private class Send implements Runnable{
+		private String msg;
+		public Send(String msg){this.msg=msg;}
+		@Override
+		public void run() {
+			out.println(msg);
+		}
+	}
+	
 	private class ServerStart implements Runnable{
 		@Override
 		public void run() {
@@ -52,6 +67,7 @@ public class TCPServer{
 				
 		    	serverSocket = new ServerSocket(port);
 		        clientSocket = serverSocket.accept();
+		        System.out.println("TCP Connection accepted");
 		        
 		        out =
 		            new PrintWriter(clientSocket.getOutputStream(), true);
@@ -59,6 +75,7 @@ public class TCPServer{
 		            new InputStreamReader(clientSocket.getInputStream()));
 		        
 		        while (isStarted && (inputLine = in.readLine()) != null) {
+		        	System.out.println("TCP packet received");
 		        	if(onReceive!=null){
 		        		onReceive.onReceive(inputLine);
 		        	}

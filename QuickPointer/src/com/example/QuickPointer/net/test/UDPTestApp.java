@@ -1,22 +1,17 @@
-package com.example.QuickPointer;
+package com.example.QuickPointer.net.test;
 
 import java.io.IOException;
 
+import com.example.QuickPointer.Config;
 import com.example.QuickPointer.net.OnDataReceiveListener;
 import com.example.QuickPointer.net.UDPClient;
 import com.example.QuickPointer.net.UDPServer;
 
-public class UDPTestApp {
-
-	/**
-	 * @param args
-	 * @throws IOException 
-	 */
-	static UDPServer server;
+final class UDPTestApp {
 	
 	public static void main(String[] args) throws IOException {
 		UDPClient client = new UDPClient();
-		server = new UDPServer(Config.DEFAULT_UDP_SERVER_PORT);
+		UDPServer server = new UDPServer(Config.DEFAULT_UDP_SERVER_PORT);
 		
 		final String testMsg = "t";
 		

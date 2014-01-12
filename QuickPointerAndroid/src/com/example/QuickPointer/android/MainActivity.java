@@ -3,8 +3,7 @@ package com.example.QuickPointer.android;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.example.QuickPointer.net.TCPClient;
-import com.example.QuickPointer.net.UDPClient;
+import com.example.QuickPointer.net.QuickPointerClient;
 import com.example.QuickPointer.Config;
 import com.example.quickpointerclient.R;
 
@@ -40,7 +39,9 @@ public class MainActivity extends Activity {
 	private static enum Mode{TCP, UDP};
 	private Mode mode = Mode.UDP;
 	
-	private UDPClient client;
+	private QuickPointerClient client = new QuickPointerClient();
+//	private TCPClient client;
+//	private UDPClient udpClient;
 	SeekBar barX, barY;
 	
 	private SensorManager mSensorManager;
@@ -51,6 +52,8 @@ public class MainActivity extends Activity {
 	private boolean isBinded =false;
 	
 	protected int systemDimX = 800, systemDimY = 600;
+	
+	String hostName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,27 +72,50 @@ public class MainActivity extends Activity {
 		btBtn = (Button) findViewById(R.id.blueToothBtn);
 		
 		connectBtn.setOnClickListener(new OnClickListener(){
-
 			@Override
 			public void onClick(View v) {
-				String hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
-				try {
-					client = new UDPClient();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				client.connect(hostName, Config.DEFAULT_UDP_SERVER_PORT);
+				Log.d(TAG, "on Connect Button click");
+				hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
+				//client.getTCPClient().setOnConnectedListener(onTCPConnect);
+				client.connect(hostName, Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
 			}
 		});
 		
 		initializeSeekBarControl();
 		
 		//initialize bluetooth button and adapter
-		initializeBlueTooth();
+		//initializeBlueTooth();
 	    
 	}// end of onCreate
+		
+/*	private final OnDataReceiveListener onTCPDataReceive = new OnDataReceiveListener(){
+		@Override
+		public void onReceive(String msg) {
+			Log.d(TAG, "TCPClient onReceive");
+			if(msg!=null && msg.equals(TCPProtocol.startString)){
+				try {
+					udpClient = new UDPClient();
+					udpClient.setOnConnectedListener(new OnConnectedListener(){
+						@Override
+						public void onConnected(boolean isConnected) {
+							if(isConnected){
+								Log.i(TAG, "UDPServer connected.");
+								client.send(TCPProtocol.startString);
+							}else{
+								Log.e(TAG, "Fail to connect UDPserver.");
+							}
+						}
+					});
+					udpClient.connect(hostName, Config.DEFAULT_UDP_SERVER_PORT);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+				Log.i(TAG,"Server is stopped");
+			}
+		}
+	};*/
 	
 //Seekbar - coordinate control by orientation sensor
 	//change seekbar attributes by sensor
@@ -108,7 +134,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
-			sendCoordinateMessage(barX.getProgress(),barY.getProgress());
+			client.sendCoordinateMsg(barX.getProgress(),barY.getProgress());
 		}
 	};
 	
@@ -179,7 +205,7 @@ public class MainActivity extends Activity {
 		    barX.setProgress(x);
 		    barY.setProgress(y);
 		    
-		    sendCoordinateMessage(x,y);
+		    client.sendCoordinateMsg(x, y);
 		}
 	}
 	
@@ -272,11 +298,5 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-	}
-	
-	public void sendCoordinateMessage(int x,int y){
-		if(client!=null){
-			client.send("A"+x+","+y);
-		}
 	}
 }

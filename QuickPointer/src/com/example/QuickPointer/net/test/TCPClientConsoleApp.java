@@ -1,4 +1,4 @@
-package com.example.QuickPointer;
+package com.example.QuickPointer.net.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import com.example.QuickPointer.net.OnDataReceiveListener;
 import com.example.QuickPointer.net.TCPClient;
 import com.example.QuickPointer.net.TCPProtocol;
-import com.example.QuickPointer.net.UDPClient;
 
 
 public class TCPClientConsoleApp {

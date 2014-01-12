@@ -1,13 +1,9 @@
 package com.example.QuickPointer;
 
 import java.io.IOException;
-import java.net.SocketException;
-
 import com.example.QuickPointer.net.OnDataReceiveListener;
-import com.example.QuickPointer.net.TCPProtocol;
-import com.example.QuickPointer.net.TCPServer;
+import com.example.QuickPointer.net.QuickPointerServer;
 import com.example.QuickPointer.net.UDPProtocol;
-import com.example.QuickPointer.net.UDPServer;
 import com.example.QuickPointer.ui.QuickPointerMainFrame;
 
 public class QuickPointerApp {
@@ -31,34 +27,45 @@ public class QuickPointerApp {
                 }
             });
             
-            final UDPServer server = new UDPServer(Config.DEFAULT_UDP_SERVER_PORT);
+            final QuickPointerServer server = new QuickPointerServer(Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
             
-            server.setOnDataReceiveListener(new OnDataReceiveListener(){
+//            final UDPServer server = new UDPServer(Config.DEFAULT_UDP_SERVER_PORT);
+            
+            server.setOnCoordinateDataReceiveListener(new OnDataReceiveListener(){
 	            @Override
 	            public void onReceive(String msg) {
-		            int x=0,y=0;
-		            UDPProtocol.decompileCoordinateMsg(msg, x, y);
-		            qp.setPosition(x, y);
+		            int[] c;
+		            try {
+						c = UDPProtocol.decompileCoordinateMsg(msg);
+			            System.out.println("Setting new position:"+c[0]+","+c[1]);
+						qp.setPosition(c[0], c[1]);
+					} catch (IOException e) {
+						//ignore the packet
+					}
 	            }
             });
             
-            final TCPServer mServer = new TCPServer(Config.DEFAULT_TCP_SERVER_PORT);
-            final TCPProtocol protocol = new TCPProtocol();
+            //final TCPServer mServer = new TCPServer(Config.DEFAULT_TCP_SERVER_PORT);
+            //final TCPProtocol protocol = new TCPProtocol();
             
-            mServer.setOnDataReceiveListener(new OnDataReceiveListener(){
+            /*mServer.setOnDataReceiveListener(new OnDataReceiveListener(){
 				@Override
 				public void onReceive(String msg) {
+					System.out.println("TCP msg received:"+msg);
 					switch(protocol.receiveMsg(msg)){
-						case 0:
-							//Terminate this program
-							mServer.out.println(protocol.getResponseMsg());
+						case END:
+							//Terminate this program TODO
+							mServer.send(protocol.getResponseMsg());
 							
 							server.stop();
 							mServer.stop();
 							break;
-						case 1:	//start receive coordinates
+						case START:	//start receive coordinates
 							try {
+								System.out.println("Starting UDPServer...");
 								server.start();
+								//TODO
+								mServer.send(TCPProtocol.startString);
 							} catch (SocketException e) {
 								e.printStackTrace();
 								System.exit(1);
@@ -70,6 +77,9 @@ public class QuickPointerApp {
 					}
 				}
             });
+            */
             
+            System.out.println("Starting Server...");
+            server.start();
         }
 }

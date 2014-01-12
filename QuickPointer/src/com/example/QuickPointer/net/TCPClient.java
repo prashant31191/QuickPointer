@@ -20,17 +20,6 @@ public class TCPClient{
 	
 	Thread sendNReceive;
 	
-    public void sendMessage(String msg)
-    {
-    	if(sendNReceive!=null && sendNReceive.isAlive()){
-    		//TODO possible bug
-    		System.out.println("Error: Thread is still running, msg skipeed.");
-    	}else{
-    		sendNReceive = new Thread(new MessageSendNReceive(msg));
-    		sendNReceive.start();
-    	}
-    }
-    
     public void close()
     {
     	Thread stop = new Thread(new Stop());
@@ -93,13 +82,14 @@ public class TCPClient{
 		public void run() {
 			if(socket!=null && out!=null && socket.isConnected()){
 				out.println(fromUser);
-				
-				if(onDataReceiveListener!=null){
-					try {
-						onDataReceiveListener.onReceive(in.readLine());
-					} catch (IOException e) {
-						e.printStackTrace();
+				try {
+					String fromServer = in.readLine();
+					System.out.println("Message received:"+fromServer);
+					if(onDataReceiveListener!=null){
+						onDataReceiveListener.onReceive(fromServer);
 					}
+				}catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}

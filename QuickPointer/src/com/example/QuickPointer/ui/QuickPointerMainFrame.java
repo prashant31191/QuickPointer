@@ -1,16 +1,20 @@
 package com.example.QuickPointer.ui;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
 public class QuickPointerMainFrame extends QuickPointerBaseFrame{
 	@SuppressWarnings("serial")
-	class Pointer extends JPanel {
-	    public final int size = 10;
-	    public Color color = Color.red;
-	    private int curX=0,curY=0;
-	    private int x=0,y=0;
+	protected class Pointer extends JPanel {
+	    protected final int size = 10;
+	    protected Color color = Color.red;
+	    protected int curX=0,curY=0;
+	    protected int x=0,y=0;
+
+	    //private int targetX=0, targetY=0;
 	    
 	    @Override
 	    public void paintComponent(Graphics g) {
@@ -21,23 +25,25 @@ public class QuickPointerMainFrame extends QuickPointerBaseFrame{
 	        //clear the old point
 	        g.clearRect(curX-size, curY-size, curX+size, curY+size);
 	        
-	        //draw the new point
-	        g.fillOval(x, y, size, size);
+	        //move half of the distance per frame
+	        curX = Math.round(curX+(x-curX)*sensitivity);
+	        curY = Math.round(curY+(y-curY)*sensitivity);
 	        
-	        //update current position
-	        curX=x;
-	        curY=y;
+	        //draw the new point
+	        g.fillOval(curX, curY, size, size);
+	        
 	    }    
 	}
 	
 	
-	Pointer p = new Pointer();
-	
+	protected Pointer p = new Pointer();
+    protected final int fps = 25;
+	protected final float sensitivity = 0.2f; //0-1
 	
 	public void setPosition(int x, int y){
-		p.x=x;
-		p.x=y;
-		p.repaint();
+		p.x=Math.min(sysDim.width,Math.max(0, x));
+		p.y=Math.min(sysDim.height,Math.max(0, y));
+		//p.repaint();
 	}
 	
 	/**
@@ -48,19 +54,19 @@ public class QuickPointerMainFrame extends QuickPointerBaseFrame{
 	public void translateC(int deltaX, int deltaY){
 		p.x = (p.x + deltaX)% sysDim.width;
 		p.y = (p.y + deltaY)% sysDim.height;
-		p.repaint();
+		//p.repaint();
 	}
 	
 	public void translate(int deltaX, int deltaY){
 		p.x = Math.max(p.x+deltaX,sysDim.width);
 		p.y = Math.max(p.y+deltaY, sysDim.width);
-		p.repaint();
+		//p.repaint();
 	}
 	
 	public void setPositionR(float percentileX, float percentileY){
 		p.x = Math.round(sysDim.width*percentileX);
 		p.y = Math.round(sysDim.height*percentileY);
-		p.repaint();
+		//p.repaint();
 	}
 	
 	@Override
@@ -70,7 +76,18 @@ public class QuickPointerMainFrame extends QuickPointerBaseFrame{
 		frame.setGlassPane(p);
 		p.setVisible(true);
 		
-		setPosition(sysDim.width/2,sysDim.height/2);
+		Timer repaintTimer = new Timer();
+		repaintTimer.schedule(new TimerTask(){
+			@Override
+			public void run() {
+				if(p.x!=p.curX||p.y!=p.curY){
+					p.repaint();
+				}
+			}
+		},2000,1000/fps);
+		
+		//TODO BUG Ubuntu cannot clear the point at the first few frames ??
+		setPositionR(0.5f,0.5f);
 	}
 
 }

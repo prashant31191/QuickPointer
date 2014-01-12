@@ -1,9 +1,7 @@
-package com.example.QuickPointer;
+package com.example.QuickPointer.ui;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.example.QuickPointer.ui.QuickPointerMainFrame;
 
 public class RenderTestApp {
 
@@ -20,8 +18,8 @@ public class RenderTestApp {
 	    timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				qp.translateC(1,1);
-			}}, 1000, 100);
+				qp.translateC(100,100);
+			}}, 1000, 1000);
 	}
 
 }

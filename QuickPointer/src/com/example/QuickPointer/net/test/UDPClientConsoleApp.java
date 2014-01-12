@@ -1,10 +1,9 @@
-package com.example.QuickPointer;
+package com.example.QuickPointer.net.test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.example.QuickPointer.net.TCPClient;
 import com.example.QuickPointer.net.UDPClient;
 
 public class UDPClientConsoleApp {

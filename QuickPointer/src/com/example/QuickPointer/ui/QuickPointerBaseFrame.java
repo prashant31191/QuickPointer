@@ -6,7 +6,6 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 public class QuickPointerBaseFrame {
-
 	   protected JFrame frame;
 	   public Dimension sysDim = Toolkit.getDefaultToolkit().getScreenSize();
 	    /**
@@ -21,7 +20,8 @@ public class QuickPointerBaseFrame {
 	        //hide the menu bar
 	        frame.setUndecorated(true);
 	        
-	        frame.setAlwaysOnTop(true);
+	        //TODO
+	        //frame.setAlwaysOnTop(true);
 	        
 	        //transparent background
 	        frame.setBackground(new Color(0,0,0,0));
@@ -33,5 +33,4 @@ public class QuickPointerBaseFrame {
 	        frame.setSize(sysDim.width,sysDim.height);
 	        frame.setVisible(true);
 	    }
-			    
 }

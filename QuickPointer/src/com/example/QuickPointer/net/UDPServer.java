@@ -9,10 +9,11 @@ public class UDPServer{
 	protected DatagramSocket socket;
 	private boolean isStarted = false;
 	private Thread receive;
-	int port;
+	private int port;
 		
 	public UDPServer(int port){ this.port = port;}
 	
+	public boolean isStarted(){return isStarted;}
 	public void start() throws SocketException{
 		if(socket==null || socket.isClosed()){
 			isStarted = true;

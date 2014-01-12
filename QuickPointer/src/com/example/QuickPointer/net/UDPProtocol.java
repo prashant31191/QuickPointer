@@ -1,5 +1,6 @@
 package com.example.QuickPointer.net;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 
 public class UDPProtocol {
@@ -8,16 +9,17 @@ public class UDPProtocol {
 	public static String compileCoordinateMsg(int x, int y){
 		return "A"+x+","+y;
 	}
-	public static void decompileCoordinateMsg(String msg,int x, int y) {
+	public static int[] decompileCoordinateMsg(String msg) throws IOException {
 		if(msg.startsWith("A")){
 			int i = msg.indexOf(",");
 			if(i>1){
-				x=Integer.parseInt(msg.substring(1,i));
-				y = Integer.parseInt(msg.substring(i+1));
-				return;
+				int[] c = new int[2];
+				c[0] =Integer.parseInt(msg.substring(1,i));
+				c[1] = Integer.parseInt(msg.substring(i+1));
+				return c;
 			}
 		}
-		System.err.println("[Warning] Cannot decompile msg");
+		throw new IOException("Cannot decompile coordinate msg");
 	}
 	
 	public static DatagramPacket compilePacket(String msg){

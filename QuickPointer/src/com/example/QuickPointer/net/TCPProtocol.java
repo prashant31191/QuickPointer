@@ -3,13 +3,14 @@ package com.example.QuickPointer.net;
 public class TCPProtocol {
 	public static final String endString = "END";
 	public static final String startString = "START";
-	private int status = 1;
-	public int getStatus(){return status;}
-	public int receiveMsg(String msg){
+	public enum Status {READY, END, START};
+	private Status status = Status.READY;
+	public Status getStatus(){return status;}
+	public Status receiveMsg(String msg){
 		if(msg.equals(endString)){
-			status = 0;
+			status = Status.END;
 		}else if(msg.equals(startString)){
-			status = 1;
+			status = Status.START;
 		}else{
 			System.err.println("[Warning] Unknown message.");
 		}
@@ -18,11 +19,11 @@ public class TCPProtocol {
 	
 	public String getResponseMsg(){
 		switch(status){
-		case 0:
+		case END:
 			return endString;
-		case 1:
+		case START:
 			return startString;
+		default: return"";
 		}
-		return "";
 	}
 }
