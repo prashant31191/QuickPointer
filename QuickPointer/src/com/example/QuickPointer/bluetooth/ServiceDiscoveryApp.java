@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import javax.bluetooth.*;
 
-public class test {
+public class ServiceDiscoveryApp {
     public static final Vector<RemoteDevice> devicesDiscovered = new Vector<RemoteDevice>();
     
     static final UUID OBEX_OBJECT_PUSH = new UUID(0x1105);
