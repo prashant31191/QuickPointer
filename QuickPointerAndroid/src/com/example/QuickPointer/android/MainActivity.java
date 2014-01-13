@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 	private Sensor mSensor;
 	
 	protected TextView textX, textY, textZ;
-	protected Button bindBtn, connectBtn;
+	protected Button bindBtn, connectBtn, btBtn;
 	private boolean isBinded =false;
 	
 	protected int systemDimX = 800, systemDimY = 600;
@@ -83,8 +83,15 @@ public class MainActivity extends Activity {
 		
 		initializeSeekBarControl();
 		
-		//initialize bluetooth button and adapter
-		//initializeBlueTooth();
+		//initialize bluetooth button
+		final Intent btIntent = new Intent(this, BluetoothClient.class);
+		btBtn.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				//Intent intent = new Intent(v, BlueToothClient.class);
+				startActivity(btIntent);
+			}
+		});
 	    
 	}// end of onCreate
 		
@@ -210,57 +217,7 @@ public class MainActivity extends Activity {
 	}
 	
 //End of Seekbar
-	
-//Bluetooth related
-	private static final String TAG_bt = "BlueTooth";
-	String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
-	String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
-	BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
-	static final String serverUUID = "11111111111111111111111111111123";
-	
-	// bluetooth connection Button
-	protected Button btBtn;
-	private void initializeBlueTooth(){
-		btBtn.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				// Run the bluetooth setup
-				bluetooth.enable();
-				if(!bluetooth.isDiscovering()){
-					Log.d(TAG_bt,"Start searching other bluetooth devices.");
-					bluetooth.startDiscovery();
-				}
-			}
-			
-		});
 		
-	    BroadcastReceiver discoveryResult = new BroadcastReceiver(){
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.d(TAG_bt,"Action founded, start showing the results.");
-	            String remoteDeviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
-	            BluetoothDevice remoteDevice;
-
-	            remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-	            Log.i("@#$%^&*(*&^%$#@#$%^&*(", "WYSWIETLAM");
-	            Toast.makeText(getApplicationContext(), "Discovered: " + remoteDeviceName + " address " + remoteDevice.getAddress(), Toast.LENGTH_SHORT).show();
-
-	            try{
-	                BluetoothDevice device = bluetooth.getRemoteDevice(remoteDevice.getAddress());
-	                BluetoothSocket clientSocket = device.createRfcommSocketToServiceRecord(UUID.fromString(serverUUID));
-	                clientSocket.connect();
-
-	            } catch (IOException e) {
-	                Log.e(TAG_bt, e.getMessage());
-	            }
-			}
-	    };
-
-	    registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-	}
-//End of bluetooth related
-	
 //Orientation Event listener
 
 	
