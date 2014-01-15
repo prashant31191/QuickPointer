@@ -1,8 +1,6 @@
 package com.example.QuickPointer.android;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Set;
 import java.util.UUID;
 
 import com.example.quickpointerclient.R;
@@ -21,12 +19,11 @@ import android.widget.Toast;
 public class BluetoothClient extends Activity {
  
         private static final String TAG = "MyActivity";
-        private static final int REQUEST_ENABLE_BT = 0;
         private BluetoothAdapter mBtAdapter;
         private BluetoothSocket socket;
         private Button button;
         
-        private static final String uuid = "11111111-1111-1111-1111-111111111123";//"38400000-8cf0-11bd-b23e-10b96e4ef00d"
+        private static final UUID uuid = UUID.fromString("11111111-1111-1111-1111-111111111123");
         private static final String mac = "E8:39:DF:06:DF:AB";
  
         /** Called when the activity is first created. */
@@ -84,7 +81,7 @@ public class BluetoothClient extends Activity {
                                 }
                         }
                       
-                        Thread btThread = new ConnectThread(mBtAdapter.getRemoteDevice(mac));
+                        Thread btThread = new Thread(connect);
                         btThread.start();;
                         
                         button.setOnClickListener(new OnClickListener() {
@@ -147,49 +144,23 @@ public class BluetoothClient extends Activity {
                 }
         }
         
-        private class ConnectThread extends Thread {
-            //private final BluetoothSocket mmSocket;
-            private final BluetoothDevice mmDevice;
-         
-            public ConnectThread(BluetoothDevice device) {
-                // Use a temporary object that is later assigned to mmSocket,
-                // because mmSocket is final
-                BluetoothSocket tmp = null;
-                mmDevice = device;
-         
-                // Get a BluetoothSocket to connect with the given BluetoothDevice
-                try {
-                    // MY_UUID is the app's UUID string, also used by the server code
-                	UUID uid = UUID.fromString(uuid);
-                	Log.d(TAG,"uuid created");
-                    tmp = device.createRfcommSocketToServiceRecord(uid);
-                } catch (IOException e) { }
-                socket = tmp;
-            }
-         
-            public void run() {
-                // Cancel discovery because it will slow down the connection
-                mBtAdapter.cancelDiscovery();
-         
-                try {
-                    // Connect the device through the socket. This will block
-                    // until it succeeds or throws an exception
-                    socket.connect();
-                } catch (IOException connectException) {
-                    // Unable to connect; close the socket and get out
-                    try {
-                        socket.close();
-                    } catch (IOException closeException) { }
-                    return;
-                }
-         
-            }
-         
-            /** Will cancel an in-progress connection, and close the socket */
-            public void cancel() {
-                try {
-                    socket.close();
-                } catch (IOException e) { }
-            }
-        }
+        private final Runnable connect = new Runnable(){
+			@Override
+			public void run() {
+				try {
+					socket = mBtAdapter.getRemoteDevice(mac).createRfcommSocketToServiceRecord(uuid);
+					
+					mBtAdapter.cancelDiscovery();
+					
+					socket.connect(); //block
+				} catch (IOException e) {
+                    Toast.makeText(BluetoothClient.this, "Bluetooth socket error.", Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+					try {
+						socket.close();
+					} catch (IOException e1) {}
+				}
+			}
+        };
+        
 }

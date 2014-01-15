@@ -1,10 +1,11 @@
-package com.example.QuickPointer;
+package smallcampus.QuickPointer;
 
 import java.io.IOException;
-import com.example.QuickPointer.net.OnDataReceiveListener;
-import com.example.QuickPointer.net.QuickPointerServer;
-import com.example.QuickPointer.net.UDPProtocol;
-import com.example.QuickPointer.ui.QuickPointerMainFrame;
+
+import smallcampus.QuickPointer.net.BaseServer;
+import smallcampus.QuickPointer.net.EventListener;
+import smallcampus.QuickPointer.net.QPTcpUdpServer;
+import smallcampus.QuickPointer.ui.QuickPointerMainFrame;
 
 public class QuickPointerApp {
         public static void main(String[] args) throws IOException{
@@ -27,22 +28,15 @@ public class QuickPointerApp {
                 }
             });
             
-            final QuickPointerServer server = new QuickPointerServer(Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
+            final BaseServer server = new QPTcpUdpServer(Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
             
 //            final UDPServer server = new UDPServer(Config.DEFAULT_UDP_SERVER_PORT);
-            
-            server.setOnCoordinateDataReceiveListener(new OnDataReceiveListener(){
-	            @Override
-	            public void onReceive(String msg) {
-		            int[] c;
-		            try {
-						c = UDPProtocol.decompileCoordinateMsg(msg);
-			            System.out.println("Setting new position:"+c[0]+","+c[1]);
-						qp.setPosition(c[0], c[1]);
-					} catch (IOException e) {
-						//ignore the packet
-					}
-	            }
+                        
+            server.setOnCoordinateReceiveListener(new EventListener<int[]>(){
+				@Override
+				public void perform(int[] args) {
+					qp.setPosition(args[0], args[1]);
+				}
             });
             
             //final TCPServer mServer = new TCPServer(Config.DEFAULT_TCP_SERVER_PORT);

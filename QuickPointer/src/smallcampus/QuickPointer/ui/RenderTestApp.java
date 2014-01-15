@@ -1,4 +1,4 @@
-package com.example.QuickPointer.ui;
+package smallcampus.QuickPointer.ui;
 
 import java.util.Timer;
 import java.util.TimerTask;

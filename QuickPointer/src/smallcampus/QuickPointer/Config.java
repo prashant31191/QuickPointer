@@ -1,4 +1,4 @@
-package com.example.QuickPointer;
+package smallcampus.QuickPointer;
 
 public final class Config {
 	public static final int DEFAULT_TCP_SERVER_PORT = 10000;
