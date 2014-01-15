@@ -1,26 +1,9 @@
-package com.example.QuickPointer.net;
+package smallcampus.QuickPointer.net;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 
 public class UDPProtocol {
 	public static final int PACKET_SIZE = 64;
-	
-	public static String compileCoordinateMsg(int x, int y){
-		return "A"+x+","+y;
-	}
-	public static int[] decompileCoordinateMsg(String msg) throws IOException {
-		if(msg.startsWith("A")){
-			int i = msg.indexOf(",");
-			if(i>1){
-				int[] c = new int[2];
-				c[0] =Integer.parseInt(msg.substring(1,i));
-				c[1] = Integer.parseInt(msg.substring(i+1));
-				return c;
-			}
-		}
-		throw new IOException("Cannot decompile coordinate msg");
-	}
 	
 	public static DatagramPacket compilePacket(String msg){
 		byte[] tbuf = msg.getBytes();

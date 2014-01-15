@@ -1,4 +1,4 @@
-package com.example.QuickPointer.bluetooth;
+package smallcampus.QuickPointer.bluetooth;
 
 import java.io.DataInputStream;
 import java.io.IOException;

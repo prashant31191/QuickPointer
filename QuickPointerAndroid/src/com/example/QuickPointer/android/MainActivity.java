@@ -1,10 +1,14 @@
 package com.example.QuickPointer.android;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
-import com.example.QuickPointer.net.QuickPointerClient;
-import com.example.QuickPointer.Config;
+import smallcampus.QuickPointer.Config;
+import smallcampus.QuickPointer.net.BaseClient;
+import smallcampus.QuickPointer.net.EventListener;
+import smallcampus.QuickPointer.net.QPTcpUdpClient;
+
 import com.example.quickpointerclient.R;
 
 import android.hardware.Sensor;
@@ -13,13 +17,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -35,13 +34,8 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private static final String TAG = "MainActivity";
-	
-	private static enum Mode{TCP, UDP};
-	private Mode mode = Mode.UDP;
-	
-	private QuickPointerClient client = new QuickPointerClient();
-//	private TCPClient client;
-//	private UDPClient udpClient;
+		
+	private BaseClient client;
 	SeekBar barX, barY;
 	
 	private SensorManager mSensorManager;
@@ -77,52 +71,50 @@ public class MainActivity extends Activity {
 				Log.d(TAG, "on Connect Button click");
 				hostName = ((EditText) findViewById(R.id.editText1)).getText().toString();
 				//client.getTCPClient().setOnConnectedListener(onTCPConnect);
-				client.connect(hostName, Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
+				try {
+					client = new QPTcpUdpClient(hostName, Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
+					
+					client.setOnServerConnectedListener(new EventListener(){
+						@Override
+						public void perform(Object args) {
+							Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+						}
+					});
+					
+					client.connect();
+					
+				} catch (UnknownHostException e1) {
+					Toast.makeText(MainActivity.this, "Unknown host", Toast.LENGTH_SHORT).show();
+				} catch (SocketException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
 		initializeSeekBarControl();
 		
 		//initialize bluetooth button
-		final Intent btIntent = new Intent(this, BluetoothClient.class);
 		btBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				//Intent intent = new Intent(v, BlueToothClient.class);
-				startActivity(btIntent);
+				client = new QPBluetoothClient();
+				
+				((QPBluetoothClient) client).setContext(MainActivity.this);
+				
+				client.setOnServerConnectedListener(new EventListener(){
+					@Override
+					public void perform(Object args) {
+						Toast.makeText(MainActivity.this, "Bluetooth connected", Toast.LENGTH_SHORT).show();
+					}
+				});
+				
+				client.connect();
 			}
 		});
 	    
 	}// end of onCreate
 		
-/*	private final OnDataReceiveListener onTCPDataReceive = new OnDataReceiveListener(){
-		@Override
-		public void onReceive(String msg) {
-			Log.d(TAG, "TCPClient onReceive");
-			if(msg!=null && msg.equals(TCPProtocol.startString)){
-				try {
-					udpClient = new UDPClient();
-					udpClient.setOnConnectedListener(new OnConnectedListener(){
-						@Override
-						public void onConnected(boolean isConnected) {
-							if(isConnected){
-								Log.i(TAG, "UDPServer connected.");
-								client.send(TCPProtocol.startString);
-							}else{
-								Log.e(TAG, "Fail to connect UDPserver.");
-							}
-						}
-					});
-					udpClient.connect(hostName, Config.DEFAULT_UDP_SERVER_PORT);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}else{
-				Log.i(TAG,"Server is stopped");
-			}
-		}
-	};*/
 	
 //Seekbar - coordinate control by orientation sensor
 	//change seekbar attributes by sensor
@@ -141,7 +133,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
-			client.sendCoordinateMsg(barX.getProgress(),barY.getProgress());
+			client.sendCoordinateData(barX.getProgress(),barY.getProgress());
 		}
 	};
 	
@@ -212,7 +204,7 @@ public class MainActivity extends Activity {
 		    barX.setProgress(x);
 		    barY.setProgress(y);
 		    
-		    client.sendCoordinateMsg(x, y);
+		    client.sendCoordinateData(x, y);
 		}
 	}
 	
