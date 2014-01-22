@@ -23,7 +23,7 @@ public class QuickPointerMainFrame extends QuickPointerBaseFrame{
 	    	g.setColor(color);
 
 	        //clear the old point
-	        g.clearRect(curX-size, curY-size, curX+size, curY+size);
+	        g.clearRect(Math.max(0, curX-size), Math.max(0, curY-size), curX+size, curY+size);
 	        
 	        //move half of the distance per frame
 	        curX = Math.round(curX+(x-curX)*sensitivity);
