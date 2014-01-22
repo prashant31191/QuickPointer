@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>ZxingLib</name>
-			<type>2</type>
-			<locationURI>PROJECT_LOC/lib/Zxing</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
