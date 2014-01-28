@@ -1,6 +1,5 @@
-package com.example.QuickPointer.android;
+package smallcampus.QuickPointer.android;
 
-import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -9,8 +8,6 @@ import smallcampus.QuickPointer.net.BaseClient;
 import smallcampus.QuickPointer.net.EventListener;
 import smallcampus.QuickPointer.net.QPTcpUdpClient;
 
-import com.example.quickpointerclient.R;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,7 +15,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -98,7 +94,7 @@ public class MainActivity extends Activity {
 		btBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				client = new QPBluetoothClient();
+				client = new QPBluetoothClient(QPBluetoothClient.defaultMac);
 				
 				((QPBluetoothClient) client).setContext(MainActivity.this);
 				

@@ -23,17 +23,21 @@ public class Protocol {
 		return status;
 	}
 	
-	public static String compileCoordinateMsg(int x, int y){
+	//public static String compileCoordinateMsg(int x, int y){
+	//	return "A"+x+","+y;
+	//}
+	
+	public static String compileCoordinateMsg(float x, float y){
 		return "A"+x+","+y;
 	}
 	
-	public static int[] decompileCoordinateMsg(String msg) throws IOException {
+	public static float[] decompileCoordinateMsg(String msg) throws IOException {
 		if(msg.startsWith("A")){
 			int i = msg.indexOf(",");
 			if(i>1){
-				int[] c = new int[2];
-				c[0] =Integer.parseInt(msg.substring(1,i));
-				c[1] = Integer.parseInt(msg.substring(i+1));
+				float[] c = new float[2];
+				c[0] = Float.parseFloat(msg.substring(1,i));
+				c[1] = Float.parseFloat(msg.substring(i+1));
 				return c;
 			}
 		}

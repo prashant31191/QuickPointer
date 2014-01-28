@@ -1,46 +1,86 @@
 package smallcampus.QuickPointer.net;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.LocalDevice;
 import javax.microedition.io.Connector;
-import javax.obex.HeaderSet;
-import javax.obex.Operation;
-import javax.obex.ResponseCodes;
-import javax.obex.ServerRequestHandler;
-import javax.obex.SessionNotifier;
+import javax.microedition.io.StreamConnection;
+import javax.microedition.io.StreamConnectionNotifier;
 
 public class QPBluetoothServer extends BaseServer{
-	static QPBluetoothServer instance;
-	public static QPBluetoothServer getInstance(){
-		if(instance!=null){
-			return instance;
-		}
-		return new QPBluetoothServer();
-	}
-	
-	protected QPBluetoothServer(){}
-	
     static final String serverUUID = "11111111111111111111111111111123";
-	private SessionNotifier serverConnection;
+	private StreamConnectionNotifier connectionNotifier;
+	private StreamConnection connection;
 	
 	@Override
 	public void start() {
         try {
-			LocalDevice.getLocalDevice().setDiscoverable(DiscoveryAgent.GIAC);
+			//LocalDevice.getLocalDevice().setDiscoverable(DiscoveryAgent.GIAC);
 			
-			serverConnection = (SessionNotifier) Connector.open("btgoep://localhost:"
-			        + serverUUID + ";name=ObexExample");
-	        int count = 0;
-	        while(count < 2) {
-	            RequestHandler handler = new RequestHandler();
-	            serverConnection.acceptAndOpen(handler);
-	            System.out.println("Received OBEX connection " + (++count));
-	        }
+			connectionNotifier = (StreamConnectionNotifier) Connector.open("btspp://localhost:"
+	                + serverUUID + ";name=BluetoothServerExample");
 			
+			connection = (StreamConnection) connectionNotifier.acceptAndOpen();
+			if(onClientConnected!=null){
+				onClientConnected.perform(null);
+			}
+	        System.out.println("Received OBEX connection ");
+	        
+	        Thread receive = new Thread(new Runnable(){
+				@Override
+				public void run() {
+			        String fromClient = null;
+			        DataInputStream is;
+					//DataOutputStream os;
+			        
+			        Protocol protocol = new Protocol();
+					try {
+						is = connection.openDataInputStream();
+						//os = connection.openDataOutputStream();
+			        
+				        byte[] bytes = new byte[1024];
+				        int data;
+				        
+				        //Receiving messages
+				        while ((data = is.read(bytes)) != -1) {
+				            fromClient = new String(bytes,0,data);
+				            
+				            System.out.println("Receive message:" + fromClient);
+				            
+				            //analyze the input from client
+							switch(protocol.receiveMsg(fromClient)){
+							case START:
+								if(onStartReceive!=null){
+									onStartReceive.perform(null);
+								}
+								break;
+							case END:
+								if(onStopReceive!=null){
+									onStopReceive.perform(null);
+								}
+								break;
+							default:
+								if(fromClient.startsWith("A")){
+									onCoordinateReceive.perform(Protocol.decompileCoordinateMsg(fromClient));
+								}
+								break;
+							}
+							
+							//TODO response to the client
+							
+							
+						}//end of while loop
+				        stop();
+				        
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+	        });
+	        
+	        receive.start();
 		} catch (BluetoothStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,42 +94,10 @@ public class QPBluetoothServer extends BaseServer{
 	@Override
 	public void stop() {
 		try {
-			serverConnection.close();
+			connection.close();
+			connectionNotifier.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-    private static class RequestHandler extends ServerRequestHandler {
-
-        public int onPut(Operation op) {
-            try {
-                HeaderSet hs = op.getReceivedHeaders();
-                String name = (String) hs.getHeader(HeaderSet.NAME);
-                if (name != null) {
-                    System.out.println("put name:" + name);
-                }
-
-                InputStream is = op.openInputStream();
-
-                StringBuffer buf = new StringBuffer();
-                int data;
-                while ((data = is.read()) != -1) {
-                    buf.append((char) data);
-                }
-
-//                if(QPBluetoothServer.getInstance().onDataReceive!=null){
-//                	QPBluetoothServer.getInstance().onDataReceive.perform(buf.toString());
-//                }
-                
-                System.out.println("got:" + buf.toString());
-
-                op.close();
-                return ResponseCodes.OBEX_HTTP_OK;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return ResponseCodes.OBEX_HTTP_UNAVAILABLE;
-            }
-        }
-    }
 }

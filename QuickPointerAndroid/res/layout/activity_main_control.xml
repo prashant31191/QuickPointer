@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainControlActivity" >
+
+    <Button
+        android:id="@+id/buttonPointer"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Pointer" />
+
+    <Button
+        android:id="@+id/buttonPageUp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_above="@+id/buttonPointer"
+        android:layout_alignLeft="@+id/buttonPointer"
+        android:layout_alignRight="@+id/buttonPointer"
+        android:layout_marginBottom="14dp"
+        android:text="Page up" />
+
+    <Button
+        android:id="@+id/buttonPageDown"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/buttonPointer"
+        android:layout_alignRight="@+id/buttonPointer"
+        android:layout_below="@+id/buttonPointer"
+        android:layout_marginTop="20dp"
+        android:text="Page down" />
+
+   <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="23dp"
+        android:orientation="vertical" >
+
+        <ProgressBar
+            android:id="@+id/progressBarX"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/progressBarY"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -28,6 +28,7 @@ public final class QPTcpUdpServer extends BaseServer {
 	@Override
 	public void start() {
 		if(!isStarted()){
+			isStarted = true;
 			new Thread(serverStart).start();
 		}
 	}
@@ -90,7 +91,11 @@ public final class QPTcpUdpServer extends BaseServer {
 			while(isStarted){
 				try {
 					fromClient = in.readLine();
-										
+					if(fromClient==null){
+						stop();
+						break;
+					}
+					
 					switch(protocol.receiveMsg(fromClient)){
 					case START:
 						if(onStartReceive!=null){

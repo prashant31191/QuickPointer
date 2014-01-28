@@ -6,5 +6,11 @@
     <string name="subTitle1">X - Y coordinates</string>
     <string name="IP_default">192.168.0.101</string>
     <string name="SubTitle2">x y z orientation</string>
+    <string name="Hint_IP">IP address</string>
+    <string name="Hint_bluetoothmac">Bluetooth MAC address</string>
+    <string name="TCPConnectBtnText">Connect TCP</string>
+    <string name="bluetoothConnectBtnText">Connect bluetooth</string>
+    <string name="title_activity_main_control">MainControlActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
