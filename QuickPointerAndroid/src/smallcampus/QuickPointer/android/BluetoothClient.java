@@ -3,11 +3,8 @@ package smallcampus.QuickPointer.android;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.example.quickpointerclient.R;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.util.Log;

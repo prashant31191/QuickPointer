@@ -14,16 +14,6 @@ import javax.obex.ServerRequestHandler;
 import javax.obex.SessionNotifier;
 
 public class QPBluetoothServer extends BaseServer{
-	static QPBluetoothServer instance;
-	public static QPBluetoothServer getInstance(){
-		if(instance!=null){
-			return instance;
-		}
-		return new QPBluetoothServer();
-	}
-	
-	protected QPBluetoothServer(){}
-	
     static final String serverUUID = "11111111111111111111111111111123";
 	private SessionNotifier serverConnection;
 	
@@ -39,6 +29,9 @@ public class QPBluetoothServer extends BaseServer{
 	            RequestHandler handler = new RequestHandler();
 	            serverConnection.acceptAndOpen(handler);
 	            System.out.println("Received OBEX connection " + (++count));
+	            if(onClientConnected!=null){
+	            	onClientConnected.perform(null);
+	            }
 	        }
 			
 		} catch (BluetoothStateException e) {
@@ -78,9 +71,8 @@ public class QPBluetoothServer extends BaseServer{
                     buf.append((char) data);
                 }
 
-//                if(QPBluetoothServer.getInstance().onDataReceive!=null){
-//                	QPBluetoothServer.getInstance().onDataReceive.perform(buf.toString());
-//                }
+                //TODO Data process
+                
                 
                 System.out.println("got:" + buf.toString());
 

@@ -1,11 +1,5 @@
 package smallcampus.QuickPointer.android;
 
-import com.example.quickpointerclient.R;
-import com.example.quickpointerclient.R.id;
-import com.example.quickpointerclient.R.layout;
-import com.example.quickpointerclient.R.menu;
-import com.example.quickpointerclient.R.string;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;

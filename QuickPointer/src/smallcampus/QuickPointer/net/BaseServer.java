@@ -13,8 +13,8 @@ public abstract class BaseServer {
 		onClientConnected = listener;
 	}
 		
-	protected EventListener<int[]> onCoordinateReceive;
-	public void setOnCoordinateReceiveListener(EventListener<int[]> listener){
+	protected EventListener<float[]> onCoordinateReceive;
+	public void setOnCoordinateReceiveListener(EventListener<float[]> listener){
 		onCoordinateReceive = listener;
 	}
 	

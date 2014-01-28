@@ -3,13 +3,12 @@ package smallcampus.QuickPointer.android;
 import java.io.IOException;
 import java.util.UUID;
 
+import smallcampus.QuickPointer.net.BaseClient;
+import smallcampus.QuickPointer.net.Protocol;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-import smallcampus.QuickPointer.net.BaseClient;
-import smallcampus.QuickPointer.net.Protocol;
 
 public class QPBluetoothClient extends BaseClient {
 
@@ -86,6 +85,8 @@ public class QPBluetoothClient extends BaseClient {
 	public void disconnect() {
 		isConnected = false;
 		try {
+			socket.getOutputStream().write(-1);
+			socket.getOutputStream().flush();
 			socket.close();
 		} catch (IOException e) {}
 	}
@@ -94,7 +95,8 @@ public class QPBluetoothClient extends BaseClient {
 	public void sendCoordinateData(float x, float y) {
 		if(isConnected){
 			try {
-				socket.getOutputStream().write(Protocol.compileCoordinateMsg((int)x,(int)y).getBytes());
+				socket.getOutputStream().write(Protocol.compileCoordinateMsg(x,y).getBytes());
+				socket.getOutputStream().flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -107,6 +109,7 @@ public class QPBluetoothClient extends BaseClient {
 		if(isConnected){
 			try {
 				socket.getOutputStream().write(Protocol.startString.getBytes());
+				socket.getOutputStream().flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -119,6 +122,7 @@ public class QPBluetoothClient extends BaseClient {
 		if(isConnected){
 			try {
 				socket.getOutputStream().write(Protocol.endString.getBytes());
+				socket.getOutputStream().flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

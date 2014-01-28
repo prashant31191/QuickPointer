@@ -53,7 +53,8 @@ public final class QPTcpUdpClient extends BaseClient {
 	@Override
 	public synchronized void sendCoordinateData(float x, float y) {
 		if(isConnected()){
-			new Thread(new UdpSend(Protocol.compileCoordinateMsg((int)x, (int)y))).start();;
+			//TODO data lost
+			new Thread(new UdpSend(Protocol.compileCoordinateMsg(x, y))).start();;
 		}
 	}
 
@@ -74,6 +75,7 @@ public final class QPTcpUdpClient extends BaseClient {
 	private final class UdpSend implements Runnable{
 		DatagramPacket p;
 		UdpSend(String msg){
+			System.out.println("UDPSend preparing msg:"+msg);
 			p = UDPProtocol.compilePacket(msg);
 		}
 		@Override
@@ -152,6 +154,8 @@ public final class QPTcpUdpClient extends BaseClient {
 		@Override
 		public void run() {
 			try {
+				instance.tcpSocket.shutdownOutput();
+				instance.tcpSocket.shutdownInput();
 				instance.tcpSocket.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

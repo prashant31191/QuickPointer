@@ -8,8 +8,6 @@ import smallcampus.QuickPointer.net.BaseClient;
 import smallcampus.QuickPointer.net.EventListener;
 import smallcampus.QuickPointer.net.QPTcpUdpClient;
 
-import com.example.quickpointerclient.R;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;

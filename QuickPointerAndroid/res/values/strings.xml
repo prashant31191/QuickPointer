@@ -10,5 +10,7 @@
     <string name="Hint_bluetoothmac">Bluetooth MAC address</string>
     <string name="TCPConnectBtnText">Connect TCP</string>
     <string name="bluetoothConnectBtnText">Connect bluetooth</string>
+    <string name="title_activity_main_control">MainControlActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
