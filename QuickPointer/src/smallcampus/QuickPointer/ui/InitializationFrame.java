@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class InitializationFrame extends JFrame {
 	public static final String bluetoothString = "bluetooth";
 	public static final String tcpString = "tcpip";

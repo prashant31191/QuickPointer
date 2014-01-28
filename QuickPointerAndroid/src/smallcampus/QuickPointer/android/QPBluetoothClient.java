@@ -97,6 +97,7 @@ public class QPBluetoothClient extends BaseClient {
 	public void sendCoordinateData(float x, float y) {
 		if(isConnected){
 			try {
+				Log.d("Bluetooth", "Sending...");
 				socket.getOutputStream().write(Protocol.compileCoordinateMsg(x,y).getBytes());
 				socket.getOutputStream().flush();
 			} catch (IOException e) {

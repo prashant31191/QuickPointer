@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
 		btBtn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				client = new QPBluetoothClient();
+				client = new QPBluetoothClient(QPBluetoothClient.defaultMac);
 				
 				((QPBluetoothClient) client).setContext(MainActivity.this);
 				

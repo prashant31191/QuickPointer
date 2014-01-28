@@ -85,9 +85,9 @@ public class BluetoothClient extends Activity {
                                 public void onClick(View v) {
                                         Log.d(TAG,"In listener button.");
                                         try {
-                                                if (socket != null)
-                                                        socket.getOutputStream().write("Hello, world!".getBytes());
-                                                else
+                                                if (socket != null){
+                                                        socket.getOutputStream().write("Hello, world!".getBytes());                                                        socket.getOutputStream().flush();
+                                                }else
                                                         Toast.makeText(BluetoothClient.this, "Not connected to destkop application.", Toast.LENGTH_SHORT).show();
                                         } catch (IOException e) {
                                                 Log.d(TAG, e.toString());

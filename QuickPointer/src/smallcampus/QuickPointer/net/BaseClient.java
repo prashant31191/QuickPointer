@@ -1,6 +1,5 @@
 package smallcampus.QuickPointer.net;
 
-import java.io.IOException;
 
 public abstract class BaseClient {
 	public final Protocol protocol = new Protocol();

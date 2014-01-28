@@ -1,21 +1,12 @@
 package smallcampus.QuickPointer.net;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.bluetooth.BluetoothStateException;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.LocalDevice;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
-import javax.obex.HeaderSet;
-import javax.obex.Operation;
-import javax.obex.ResponseCodes;
-import javax.obex.ServerRequestHandler;
-import javax.obex.SessionNotifier;
 
 public class QPBluetoothServer extends BaseServer{
     static final String serverUUID = "11111111111111111111111111111123";
@@ -41,11 +32,12 @@ public class QPBluetoothServer extends BaseServer{
 				public void run() {
 			        String fromClient = null;
 			        DataInputStream is;
-			        DataOutputStream os;
+					//DataOutputStream os;
+			        
 			        Protocol protocol = new Protocol();
 					try {
 						is = connection.openDataInputStream();
-						os = connection.openDataOutputStream();
+						//os = connection.openDataOutputStream();
 			        
 				        byte[] bytes = new byte[1024];
 				        int data;
