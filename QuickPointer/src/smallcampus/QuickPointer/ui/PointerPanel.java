@@ -2,6 +2,7 @@ package smallcampus.QuickPointer.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
@@ -27,9 +28,12 @@ public class PointerPanel extends JPanel {
 	protected float sensitivity = 0.2f; //0-1
 
     @Override
-    public void paintComponent(Graphics g) {        
+    public void paintComponent(Graphics g) {
+    	
     	g.setColor(color);
 
+    	//set transparent background
+    	((Graphics2D) g).setBackground(new Color(0,0,0,0));
         //clear the old point
         g.clearRect(Math.max(0, curX-size), Math.max(0, curY-size), curX+size, curY+size);
         

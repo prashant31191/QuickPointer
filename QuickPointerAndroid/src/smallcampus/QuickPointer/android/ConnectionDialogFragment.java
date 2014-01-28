@@ -16,6 +16,7 @@ public class ConnectionDialogFragment extends DialogFragment {
 	
 	public interface OnClickListener{
 		public void onConnectClick(DialogFragment dialog);
+		public void onBTConnectClick(DialogFragment dialog);
 	}
 	
 	public ConnectionDialogFragment(){
@@ -35,7 +36,13 @@ public class ConnectionDialogFragment extends DialogFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				onClick.onConnectClick(ConnectionDialogFragment.this);
 			}
-		});        	
+		});
+        builder.setNegativeButton("Bluetooth(default)", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				onClick.onBTConnectClick(ConnectionDialogFragment.this);
+			}
+		});
 
         // Create the AlertDialog object and return it
         return builder.create();

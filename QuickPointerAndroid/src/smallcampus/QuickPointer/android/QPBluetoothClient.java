@@ -17,19 +17,21 @@ public class QPBluetoothClient extends BaseClient {
     private BluetoothSocket socket;
     
     private UUID uuid = UUID.fromString("11111111-1111-1111-1111-111111111123");//"38400000-8cf0-11bd-b23e-10b96e4ef00d"
-    private String mac = "E8:39:DF:06:DF:AB";
+    private String mac;
+    //TODO for testing
+    public static final String defaultMac = "E8:39:DF:06:DF:AB";
 	
-    private Context context;
-    
-    //TODO to be deleted, just for testing
-    public QPBluetoothClient(){}
+    public QPBluetoothClient(String mac)
+    {
+    	this.mac = mac;
+    }
     
     public QPBluetoothClient(String mac, String uuid){
     	this.uuid = UUID.fromString(uuid);
     	this.mac = mac;
     }
     
-    public void setContext(Context context){this.context = context;}
+    public void setContext(Context context){}
     
 	@Override
 	public void connect(){

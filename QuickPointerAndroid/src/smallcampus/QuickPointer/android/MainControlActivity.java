@@ -107,13 +107,7 @@ public class MainControlActivity extends Activity implements ConnectionDialogFra
 
 	}
 	
-	private void connect(String hostname){
-		try {
-			client = new QPTcpUdpClient(hostname,Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
-		} catch (IOException e) {
-			Toast.makeText(this, "Fail to connect", Toast.LENGTH_SHORT).show();
-			e.printStackTrace();
-		}
+	private void connect(){
 		
 		client.setOnServerConnectedListener(new EventListener(){
 			@Override
@@ -164,8 +158,23 @@ public class MainControlActivity extends Activity implements ConnectionDialogFra
 
 	@Override
 	public void onConnectClick(DialogFragment dialog) {
-		// TODO Auto-generated method stub
 		EditText host = (EditText) dialog.getDialog().findViewById(R.id.editTextHostname);
-		connect(host.getText().toString());
+		
+		try {
+			client = new QPTcpUdpClient(host.getText().toString(),Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
+		} catch (IOException e) {
+			Toast.makeText(this, "Fail to connect", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+		
+		connect();
+	}
+
+	@Override
+	public void onBTConnectClick(DialogFragment dialog) {
+		EditText host = (EditText) dialog.getDialog().findViewById(R.id.editTextHostname);
+		//TODO
+		client = new QPBluetoothClient(QPBluetoothClient.defaultMac);
+		connect();
 	}
 }
