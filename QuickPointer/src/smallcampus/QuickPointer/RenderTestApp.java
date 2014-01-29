@@ -1,7 +1,9 @@
-package smallcampus.QuickPointer.ui;
+package smallcampus.QuickPointer;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import smallcampus.QuickPointer.ui.QuickPointerMainFrame;
 
 public class RenderTestApp {
 

@@ -12,7 +12,7 @@ public final class QuickPointerMainFrame extends JFrame{
 	
 	private final Dimension sysDim = Toolkit.getDefaultToolkit().getScreenSize();
 	protected final PointerPanel p = new PointerPanel(sysDim.width,sysDim.height);
-    protected final int fps = 25;
+    protected final int fps = 40;
 	
     public QuickPointerMainFrame(){
     	super("QuickPointer");

@@ -1,23 +1,17 @@
 package smallcampus.QuickPointer.android;
 
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import smallcampus.QuickPointer.Config;
 import smallcampus.QuickPointer.net.BaseClient;
-import smallcampus.QuickPointer.net.EventListener;
-import smallcampus.QuickPointer.net.QPTcpUdpClient;
+import smallcampus.QuickPointer.net.TCP.QPTcpUdpClient;
+import smallcampus.QuickPointer.util.EventListener;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,7 +34,7 @@ public class MainControlActivity extends Activity implements ConnectionDialogFra
 	boolean sendFlag = false;
 	final double[] center = new double[2];
 	final double[] result = new double[2];
-	final double thresholdX = 45,thresholdY = 45;
+	final double thresholdX = 30,thresholdY = 20;
 
 	final String dHostName = "192.168.0.103";
 	
@@ -54,8 +48,10 @@ public class MainControlActivity extends Activity implements ConnectionDialogFra
 		pbx = (ProgressBar) findViewById(R.id.progressBarX);
 		pby = (ProgressBar) findViewById(R.id.progressBarY);
 		
-		pbx.setMax(360); //TODO
-		pby.setMax(360);
+		//Azimuth
+		pbx.setMax(180); //TODO
+		//Pitch
+		pby.setMax(180);
 				
 		btnUp = (Button) findViewById(R.id.buttonPageUp);
 		btnDown = (Button) findViewById(R.id.buttonPageDown);
@@ -85,15 +81,22 @@ public class MainControlActivity extends Activity implements ConnectionDialogFra
 		mSensor.setListener(new EventListener<float[]>(){
 			@Override
 			public void perform(float[] args) {
-				result[0] = 180 + args[0]*180/Math.PI;
-				result[1] = 180+ args[1]*180/Math.PI;
-				
+				result[0] = 90 + args[0]*180/Math.PI;
+				result[1] = args[1]*180/Math.PI;
+								
 				pbx.setProgress((int) result[0]);
-				pby.setProgress((int) result[1]);
+				pby.setProgress((int) -result[1]+90);
 				
 				if(sendFlag){
-					final float tempX = (float) ((-center[1]+result[1]+thresholdX)/(2*thresholdX));
-					final float tempY = (float) ((center[0]-result[0]+thresholdY)/(2*thresholdY));
+					double adjustment = 0;
+					if(center[0]-thresholdX < 0 && result[0]>180+center[0]-thresholdX){
+						adjustment = -180;
+					}else if(center[0] + thresholdX > 180 && result[0]<center[0]-180 +thresholdX){
+						adjustment = 180;
+					}
+					
+					final float tempX = (float) ((result[0] -center[0] + adjustment +thresholdX)/thresholdX/2);
+					final float tempY = (float) ((-center[1]+result[1]+thresholdY)/(2*thresholdY));
 					
 					//Log.d(TAG, "SendCoordinateMsg("+Math.max(Math.min(tempX, 1), 0)+","+ Math.max(Math.min(tempY, 1), 0)+")...");
 					client.sendCoordinateData(Math.max(Math.min(tempX, 1), 0), Math.max(Math.min(tempY, 1), 0));

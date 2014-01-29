@@ -1,4 +1,4 @@
-package smallcampus.QuickPointer.net;
+package smallcampus.QuickPointer.net.TCP;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +11,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+
+import smallcampus.QuickPointer.net.BaseClient;
+import smallcampus.QuickPointer.net.Protocol;
 
 public final class QPTcpUdpClient extends BaseClient {
     private static QPTcpUdpClient instance; 

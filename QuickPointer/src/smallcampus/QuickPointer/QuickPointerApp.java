@@ -3,13 +3,13 @@ package smallcampus.QuickPointer;
 import java.io.IOException;
 
 import smallcampus.QuickPointer.net.BaseServer;
-import smallcampus.QuickPointer.net.EventListener;
 import smallcampus.QuickPointer.net.QPBluetoothServer;
-import smallcampus.QuickPointer.net.QPTcpUdpServer;
+import smallcampus.QuickPointer.net.TCP.QPTcpUdpServer;
 import smallcampus.QuickPointer.ui.InitializationFrame;
 import smallcampus.QuickPointer.ui.InitializationFrame.OnServerSelectListener;
 import smallcampus.QuickPointer.ui.PointerPanel;
 import smallcampus.QuickPointer.ui.QuickPointerMainFrame;
+import smallcampus.QuickPointer.util.EventListener;
 
 public class QuickPointerApp {
         public static void main(String[] args) throws IOException{

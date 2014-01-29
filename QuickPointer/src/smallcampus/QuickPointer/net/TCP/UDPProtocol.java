@@ -1,4 +1,4 @@
-package smallcampus.QuickPointer.net;
+package smallcampus.QuickPointer.net.TCP;
 
 import java.net.DatagramPacket;
 

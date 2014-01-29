@@ -18,21 +18,17 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="smallcampus.QuickPointer.android.MainActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="smallcampus.QuickPointer.android.BluetoothClient"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="smallcampus.QuickPointer.android.ChooseConnectionActivity"
-            android:label="@string/title_activity_choose_connection"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
-        </activity>
-        <activity
             android:name="smallcampus.QuickPointer.android.MainControlActivity"
             android:label="@string/title_activity_main_control" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="smallcampus.QuickPointer.android.MainActivity"
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -25,7 +25,7 @@ public class PointerPanel extends JPanel {
     	this.height = height;
     }
     
-	protected float sensitivity = 0.2f; //0-1
+	protected float sensitivity = 0.1f; //0-1
 
     @Override
     public void paintComponent(Graphics g) {

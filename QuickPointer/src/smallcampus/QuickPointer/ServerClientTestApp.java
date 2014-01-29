@@ -1,8 +1,12 @@
-package smallcampus.QuickPointer.net;
+package smallcampus.QuickPointer;
 
 import java.io.IOException;
 
-import smallcampus.QuickPointer.Config;
+import smallcampus.QuickPointer.net.BaseClient;
+import smallcampus.QuickPointer.net.BaseServer;
+import smallcampus.QuickPointer.net.TCP.QPTcpUdpClient;
+import smallcampus.QuickPointer.net.TCP.QPTcpUdpServer;
+import smallcampus.QuickPointer.util.EventListener;
 
 public class ServerClientTestApp {	
 	public static void main(String[] args) throws IOException {

@@ -1,4 +1,4 @@
-package smallcampus.QuickPointer.net;
+package smallcampus.QuickPointer.net.TCP;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import smallcampus.QuickPointer.net.BaseServer;
+import smallcampus.QuickPointer.net.Protocol;
 
 public final class QPTcpUdpServer extends BaseServer {
 	private ServerSocket serverSocket;

@@ -1,5 +1,7 @@
 package smallcampus.QuickPointer.net;
 
+import smallcampus.QuickPointer.util.EventListener;
+
 
 public abstract class BaseClient {
 	public final Protocol protocol = new Protocol();
