@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="introduction_fragment">1</integer>
+    <integer name="connection_fragment">2</integer>
+    <integer name="controller_fragment">3</integer>
+</resources>

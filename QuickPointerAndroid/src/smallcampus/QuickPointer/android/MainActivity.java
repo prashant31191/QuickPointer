@@ -1,8 +1,11 @@
 package smallcampus.QuickPointer.android;
 
+import smallcampus.QuickPointer.android.fragment.AbstractFragment;
+import smallcampus.QuickPointer.android.fragment.AbstractFragment.ChangeFragmentHandler;
+import smallcampus.QuickPointer.android.fragment.ConnectionFragment;
+import smallcampus.QuickPointer.android.fragment.ControllerFragment;
 import smallcampus.QuickPointer.android.fragment.IntroductionFragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -14,8 +17,10 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		AbstractFragment fragment = new IntroductionFragment();
+		fragment.setChangeFragmentHandler(changeFragmentHandler);
 		getSupportFragmentManager().beginTransaction()
-        .add(R.id.fragment_container, new IntroductionFragment()).commit();
+        .add(R.id.fragment_container, fragment).commit();
 	}
 
 	@Override
@@ -25,18 +30,26 @@ public class MainActivity extends FragmentActivity {
 		return true;
 	}
 
-	private OnChangeFragmentListener mOnChangeFragmentListener = new OnChangeFragmentListener(){
+	private ChangeFragmentHandler changeFragmentHandler = new ChangeFragmentHandler(){
 
 		@Override
-		public void onChangeFragment(int fragmentId) {
-			Fragment fragment = null;
+		public void changeFragment(int fragmentId) {
+			AbstractFragment fragment = null;
 			switch(fragmentId){
-			//TODO
-			default:
+			case R.integer.introduction_fragment:
 				fragment = new IntroductionFragment();
-				((IntroductionFragment)fragment).setmOnChangeFragmentListener(mOnChangeFragmentListener);
 				break;
+			case R.integer.connection_fragment:
+				fragment = new ConnectionFragment();
+				break;
+			case R.integer.controller_fragment:
+				fragment = new ControllerFragment();
+				break;
+			default:
+				return;
 			}
+			
+			fragment.setChangeFragmentHandler(changeFragmentHandler);
 			
 			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -48,8 +61,6 @@ public class MainActivity extends FragmentActivity {
 			// Commit the transaction
 			transaction.commit();
 		}};
-	
-	public interface OnChangeFragmentListener{
-		public void onChangeFragment(int fragmentId);
-	}
+		
+
 }
