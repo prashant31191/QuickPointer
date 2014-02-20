@@ -1,26 +1,26 @@
 package smallcampus.QuickPointer.android;
 
 import smallcampus.QuickPointer.android.fragment.AbstractFragment;
-import smallcampus.QuickPointer.android.fragment.AbstractFragment.ChangeFragmentHandler;
 import smallcampus.QuickPointer.android.fragment.ConnectionFragment;
 import smallcampus.QuickPointer.android.fragment.ControllerFragment;
 import smallcampus.QuickPointer.android.fragment.IntroductionFragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
 public class MainActivity extends FragmentActivity {
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		AbstractFragment fragment = new IntroductionFragment();
-		fragment.setChangeFragmentHandler(changeFragmentHandler);
-		getSupportFragmentManager().beginTransaction()
-        .add(R.id.fragment_container, fragment).commit();
+		//set up Fragment manager
+		changeFragmentHandler = new ChangeFragmentHandler(getSupportFragmentManager());
+		
+		changeFragmentHandler.changeFragment(IntroductionFragment.id);
 	}
 
 	@Override
@@ -29,29 +29,37 @@ public class MainActivity extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
-	private ChangeFragmentHandler changeFragmentHandler = new ChangeFragmentHandler(){
-
-		@Override
-		public void changeFragment(int fragmentId) {
+		
+	private static ChangeFragmentHandler changeFragmentHandler; 
+	public static ChangeFragmentHandler getChangeFragmentHandler(){
+		return changeFragmentHandler;
+		
+	}
+	
+	public class ChangeFragmentHandler{
+		private FragmentManager manager;
+		
+		public ChangeFragmentHandler(FragmentManager fragmentManager) {
+			manager = fragmentManager;
+		}
+		
+		public void changeFragment(int fragmentId){
 			AbstractFragment fragment = null;
 			switch(fragmentId){
-			case R.integer.introduction_fragment:
+			case IntroductionFragment.id:
 				fragment = new IntroductionFragment();
 				break;
-			case R.integer.connection_fragment:
+			case ConnectionFragment.id:
 				fragment = new ConnectionFragment();
 				break;
-			case R.integer.controller_fragment:
+			case ControllerFragment.id:
 				fragment = new ControllerFragment();
 				break;
 			default:
 				return;
 			}
-			
-			fragment.setChangeFragmentHandler(changeFragmentHandler);
-			
-			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+						
+			FragmentTransaction transaction = manager.beginTransaction();
 
 			// Replace whatever is in the fragment_container view with this fragment,
 			// and add the transaction to the back stack so the user can navigate back
@@ -60,7 +68,7 @@ public class MainActivity extends FragmentActivity {
 
 			// Commit the transaction
 			transaction.commit();
-		}};
-		
+		}
+	}
 
 }

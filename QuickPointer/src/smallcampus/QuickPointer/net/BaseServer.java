@@ -9,6 +9,7 @@ public abstract class BaseServer {
 	public abstract void start();
 	public boolean isStarted(){return isStarted;}
 	public abstract void stop();
+	public abstract String getHostname();
 	
 	protected EventListener<?> onClientConnected;
 	public void setOnConnectionReceiveListener(EventListener<?> listener){

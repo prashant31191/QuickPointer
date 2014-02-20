@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import smallcampus.QuickPointer.net.BaseServer;
 import smallcampus.QuickPointer.net.Protocol;
@@ -145,4 +147,15 @@ public final class QPTcpUdpServer extends BaseServer {
 			}
 		}
 	};
+
+	@Override
+	public String getHostname() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		//TODO not good.
+		return "TCP Error";
+	}
 }

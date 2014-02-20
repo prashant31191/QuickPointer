@@ -1,6 +1,7 @@
 package smallcampus.QuickPointer.ui;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,12 +20,13 @@ public class InitializationFrame extends JFrame {
 	public InitializationFrame(){
 		super("QuickPointer init");
 		
+        setSize(500, 500);
+		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 		
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        //setSize(500, 500);
 		setVisible(true);
 	}
 
@@ -33,7 +35,7 @@ public class InitializationFrame extends JFrame {
 		JPanel panel = new JPanel();
 		bButton = new JButton("Bluetooth");
 		tButton = new JButton("TCP/IP");
-		
+				
 		bButton.addActionListener(onClick);
 		tButton.addActionListener(onClick);
 		

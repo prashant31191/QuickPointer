@@ -148,12 +148,26 @@ public class QPBluetoothClient extends BaseClient {
 						onServerConnected.perform(null);
 					}
 				} catch (IOException e) {
-                 //Toast.makeText(context, "Bluetooth socket error.", Toast.LENGTH_SHORT).show();
-					e.printStackTrace();
 					try {
 						socket.close();
 					} catch (IOException e1) {}
+					
+					if(onServerConnectFailure!=null){
+						onServerConnectFailure.perform(null);
+					}
 				}
 			}
      };
+
+	@Override
+	public void sendPageUpControl() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendPageDownControl() {
+		// TODO Auto-generated method stub
+		
+	}
 }

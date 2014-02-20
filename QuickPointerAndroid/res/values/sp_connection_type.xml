@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string-array name="connection_type">
+        <item>TCP</item>
+        <item>Bluetooth</item>
+    </string-array>
+</resources>

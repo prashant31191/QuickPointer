@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -130,6 +131,7 @@ public final class QPTcpUdpClient extends BaseClient {
 			try {
 				tcpSocket.connect(new InetSocketAddress(host,tcpPort), 5000);
 				
+				
 				isConnected = true;
 				
 				out = new PrintWriter(tcpSocket.getOutputStream(), true);
@@ -139,9 +141,11 @@ public final class QPTcpUdpClient extends BaseClient {
 				tcpReceiveThread = new Thread(tcpReceive);
 				tcpReceiveThread.start();
 				
-			} catch (IOException e) {
+			} catch (Exception e) {
 				isConnected=false;
-				e.printStackTrace();
+				if(onServerConnectFailure!=null){
+					onServerConnectFailure.perform(null);
+				}
 				return;
 			}
 			udpSocket.connect(host, udpPort);
@@ -167,4 +171,17 @@ public final class QPTcpUdpClient extends BaseClient {
 			instance.udpSocket.close();
 		}	
 	};
+
+	@Override
+	public void sendPageUpControl() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void sendPageDownControl() {
+		// TODO Auto-generated method stub
+		
+	}
 }

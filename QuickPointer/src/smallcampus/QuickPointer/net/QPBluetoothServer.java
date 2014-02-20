@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.LocalDevice;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
@@ -99,5 +100,15 @@ public class QPBluetoothServer extends BaseServer{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String getHostname() {
+		try {
+			return LocalDevice.getLocalDevice().getBluetoothAddress();
+		} catch (BluetoothStateException e) {
+			e.printStackTrace();
+		}
+		return "Bluetooth Error";
 	}
 }

@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public abstract class AbstractFragment extends Fragment {
+	
 	protected View mView;
-	private ChangeFragmentHandler changeFragmentHandler;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,16 +22,4 @@ public abstract class AbstractFragment extends Fragment {
 	protected abstract void setUI();
 	
 	public abstract int getFragmentLayoutId();
-	
-	public ChangeFragmentHandler getChangeFragmentHandler() {
-		return changeFragmentHandler;
-	}
-
-	public void setChangeFragmentHandler(ChangeFragmentHandler changeFragmentHandler) {
-		this.changeFragmentHandler = changeFragmentHandler;
-	}
-
-	public interface ChangeFragmentHandler{
-		public void changeFragment(int fragmentId);
-	}
 }
