@@ -13,8 +13,6 @@ public class IntroductionFragment extends AbstractFragment{
 	
 	@Override
 	protected void setUI(){
-		((TextView) mView.findViewById(R.id.tv_introduction)).setText("test");
-		
 		//Connect by QR code button
 		((Button) mView.findViewById(R.id.btn_connect_qr))
 			.setOnClickListener(new OnClickListener(){
@@ -22,7 +20,7 @@ public class IntroductionFragment extends AbstractFragment{
 				@Override
 				public void onClick(View v) {
 					Toast.makeText(getActivity(), 
-							"connect qr", Toast.LENGTH_SHORT).show();
+							"Not implemented yet", Toast.LENGTH_SHORT).show();
 				}});
 		
 		//Connect by manual input button
@@ -30,8 +28,6 @@ public class IntroductionFragment extends AbstractFragment{
 			.setOnClickListener(new OnClickListener(){
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(getActivity(), 
-							"connect manuel", Toast.LENGTH_SHORT).show();
 					//Change Fragment to dialog_connection
 					MainActivity.getChangeFragmentHandler().changeFragment(ConnectionFragment.id);
 				}});

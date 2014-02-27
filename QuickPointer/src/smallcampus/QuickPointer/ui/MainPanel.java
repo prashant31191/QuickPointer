@@ -1,16 +1,17 @@
 package smallcampus.QuickPointer.ui;
 
-import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 public class MainPanel extends JPanel {
@@ -27,15 +28,23 @@ public class MainPanel extends JPanel {
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gbl_panel);
 		
-		Canvas canvas = new Canvas();
-		canvas.setBackground(Color.WHITE);
+		//Canvas canvas = new Canvas();
+		//canvas.setBackground(Color.WHITE);
+		JLabel labelLogo = new JLabel();
+		URL urlLogo = MainPanel.class.getResource("images/logo.png");
+		if(urlLogo!=null){
+			labelLogo.setIcon(new ImageIcon(urlLogo,"Logo"));
+		}else{
+			System.err.println("Cannot load logo.png.");
+		}
+		
 		GridBagConstraints gbc_canvas = new GridBagConstraints();
-		gbc_canvas.fill = GridBagConstraints.BOTH;
-		gbc_canvas.insets = new Insets(0, 0, 5, 0);
-		gbc_canvas.gridx = 0;
-		gbc_canvas.gridy = 0;
-		gbc_canvas.weighty = .2;
-		add(canvas, gbc_canvas);
+		//gbc_canvas.fill = GridBagConstraints.BOTH;
+		//gbc_canvas.insets = new Insets(0, 0, 5, 0);
+		//gbc_canvas.gridx = 0;
+		//gbc_canvas.gridy = 0;
+		//gbc_canvas.weighty = .2;
+		add(labelLogo, gbc_canvas);
 		
 		JLabel lblNewLabel = new JLabel("QuickPointer");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -47,8 +56,13 @@ public class MainPanel extends JPanel {
 		gbc_lblNewLabel.weighty = .05;
 		add(lblNewLabel, gbc_lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("Introduction xxxxxxxxxxxxxxxxxxxxxx");
-		lblNewLabel_1.setVerticalAlignment(SwingConstants.TOP);
+		final String intro = "This is a laser pointer simulation software. \n"
+				+"Choose a connection type below then connect via the QuickPointer\n App with the corresponding setting.\n"
+				+"For more information: github.com/smallcampus/QuickPointer";
+		JTextArea lblNewLabel_1 = new JTextArea(intro);
+		lblNewLabel_1.setEditable(false);
+		
+		//lblNewLabel_1.setVerticalAlignment(SwingConstants.TOP);
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.fill = GridBagConstraints.BOTH;
 		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 0);
@@ -96,7 +110,7 @@ public class MainPanel extends JPanel {
 		gbc_btnNewButton_1.weightx = 0.5;
 		panel_1.add(btButton, gbc_btnNewButton_1);
 	}
-	
+		
 	public void addOnButtonClickListener(ActionListener listener){
 		btButton.addActionListener(listener);
 		tcpButton.addActionListener(listener);
