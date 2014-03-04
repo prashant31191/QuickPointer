@@ -30,4 +30,18 @@ public class EditTextManager{
 			hostname.setHint(hint);
 		}
 	};
+
+	public void changeText(String tcpHistory) {
+		textHandler.obtainMessage(0, tcpHistory).sendToTarget();
+	}
+	
+	private final Handler textHandler = new Handler(Looper.getMainLooper()) {
+		@Override
+		public void handleMessage(Message msg){
+			String text = (String) msg.obj;
+			final EditText hostname = (EditText) view.findViewById(id);
+			
+			hostname.setText(text);
+		}
+	};
 }

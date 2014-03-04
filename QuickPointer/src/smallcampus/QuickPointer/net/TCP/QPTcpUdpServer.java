@@ -7,9 +7,11 @@ import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 import smallcampus.QuickPointer.net.BaseServer;
 import smallcampus.QuickPointer.net.Protocol;
@@ -22,12 +24,35 @@ public final class QPTcpUdpServer extends BaseServer {
 	private BufferedReader in;
 	
 	private DatagramSocket socket;
-		
+	private String ip;
+	
 	Thread udpReceiveThread, tcpReceiveThread;
 	
 	public QPTcpUdpServer(int tcpPort, int udpPort) throws IOException{	
 		serverSocket = new ServerSocket(tcpPort);
 		socket = new DatagramSocket(udpPort);
+		
+		//get the ip address
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                // filters out 127.0.0.1 and inactive interfaces
+                if (iface.isLoopback() || !iface.isUp())
+                    continue;
+
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while(addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    ip = addr.getHostAddress();
+                    if(ip.toString().length()<16){
+                    	break;
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
 	}
 	
 	@Override
@@ -101,23 +126,8 @@ public final class QPTcpUdpServer extends BaseServer {
 						break;
 					}
 					
-					switch(protocol.receiveMsg(fromClient)){
-					case START:
-						if(onStartReceive!=null){
-							onStartReceive.perform(null);
-						}
-						break;
-					case END:
-						if(onStopReceive!=null){
-							onStopReceive.perform(null);
-						}
-						break;
-					default:
-						break;
-					}
-					
-					//send response
-					out.println(protocol.getResponseMsg());
+					//process the input and send response
+					out.println(processMsg(fromClient));
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -150,12 +160,6 @@ public final class QPTcpUdpServer extends BaseServer {
 
 	@Override
 	public String getHostname() {
-		try {
-			return InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		//TODO not good.
-		return "TCP Error";
+		return ip;
 	}
 }

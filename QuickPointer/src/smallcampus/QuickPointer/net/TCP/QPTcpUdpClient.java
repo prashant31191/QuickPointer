@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ConnectException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -15,6 +14,7 @@ import java.net.UnknownHostException;
 
 import smallcampus.QuickPointer.net.BaseClient;
 import smallcampus.QuickPointer.net.Protocol;
+import smallcampus.QuickPointer.net.Protocol.Status;
 
 public final class QPTcpUdpClient extends BaseClient {
     private static QPTcpUdpClient instance; 
@@ -65,14 +65,14 @@ public final class QPTcpUdpClient extends BaseClient {
 	@Override
 	public synchronized void sendStartControl() {
 		if(isConnected()){
-			new Thread(new TcpSend(Protocol.startString)).start();;
+			new Thread(new TcpSend(Protocol.getStatusString(Status.START))).start();
 		}
 	}
 
 	@Override
 	public synchronized void sendStopControl() {
 		if(isConnected()){
-			new Thread(new TcpSend(Protocol.endString)).start();;
+			new Thread(new TcpSend(Protocol.getStatusString(Status.STOP))).start();
 		}
 	}
 	
@@ -174,14 +174,16 @@ public final class QPTcpUdpClient extends BaseClient {
 
 	@Override
 	public void sendPageUpControl() {
-		// TODO Auto-generated method stub
-		
+		if(isConnected()){
+			new Thread(new TcpSend(Protocol.getStatusString(Status.PAGEUP))).start();
+		}
 	}
 
 
 	@Override
 	public void sendPageDownControl() {
-		// TODO Auto-generated method stub
-		
+		if(isConnected()){
+			new Thread(new TcpSend(Protocol.getStatusString(Status.PAGEDOWN))).start();
+		}
 	}
 }

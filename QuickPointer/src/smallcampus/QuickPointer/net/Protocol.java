@@ -2,30 +2,52 @@ package smallcampus.QuickPointer.net;
 
 import java.io.IOException;
 
-public class Protocol {
-	public static final String endString = "END";
-	public static final String startString = "START";
-	public enum Status {READY, END, START};
+public class Protocol {	
+	public enum Status {READY, STOP, START, PAGEUP, PAGEDOWN};
+	public static String getStatusString(Status status){
+		switch(status){
+		case STOP:
+			return "STOP";
+		case START:
+			return "START";
+		case PAGEUP:
+			return "PAGEUP";
+		case PAGEDOWN:
+			return "PAGEDOWN";
+		default:
+			break;
+		}
+		return "";
+	}
+	
+	public static Status getStatus(String status) throws IOException{
+		switch(status){
+		case "STOP":
+			return Status.STOP;
+		case "START":
+			return Status.START;
+		case "PAGEUP":
+			return Status.PAGEUP;
+		case "PAGEDOWN":
+			return Status.PAGEDOWN;
+		case "":
+			return Status.READY;
+		}
+		throw new IOException("Unable to pharse Status");
+	}
+	
 	private Status status = Status.READY;
 	public Status getStatus(){return status;}
+	
 	public Status receiveMsg(String msg) throws IOException{
 		if(msg==null){
 			throw new IOException("Message cannot be null.");
 		}
 		
-		if(msg.equals(endString)){
-			status = Status.END;
-		}else if(msg.equals(startString)){
-			status = Status.START;
-		}else{
-			System.err.println("[Warning] Unknown message.");
-		}
+		status = Protocol.getStatus(msg);
+		
 		return status;
 	}
-	
-	//public static String compileCoordinateMsg(int x, int y){
-	//	return "A"+x+","+y;
-	//}
 	
 	public static String compileCoordinateMsg(float x, float y){
 		return "A"+x+","+y;
@@ -45,13 +67,8 @@ public class Protocol {
 	}
 	
 	public String getResponseMsg(){
-		switch(status){
-		case END:
-			return endString;
-		case START:
-			return startString;
-		default: return"";
-		}
+		//TODO
+		return "";
 	}
 	public void reset() {
 		// TODO Auto-generated method stub

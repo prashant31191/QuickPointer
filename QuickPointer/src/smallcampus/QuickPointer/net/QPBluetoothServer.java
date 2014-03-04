@@ -35,7 +35,6 @@ public class QPBluetoothServer extends BaseServer{
 			        DataInputStream is;
 					//DataOutputStream os;
 			        
-			        Protocol protocol = new Protocol();
 					try {
 						is = connection.openDataInputStream();
 						//os = connection.openDataOutputStream();
@@ -50,23 +49,7 @@ public class QPBluetoothServer extends BaseServer{
 				            System.out.println("Receive message:" + fromClient);
 				            
 				            //analyze the input from client
-							switch(protocol.receiveMsg(fromClient)){
-							case START:
-								if(onStartReceive!=null){
-									onStartReceive.perform(null);
-								}
-								break;
-							case END:
-								if(onStopReceive!=null){
-									onStopReceive.perform(null);
-								}
-								break;
-							default:
-								if(fromClient.startsWith("A")){
-									onCoordinateReceive.perform(Protocol.decompileCoordinateMsg(fromClient));
-								}
-								break;
-							}
+							processMsg(fromClient);
 							
 							//TODO response to the client
 							

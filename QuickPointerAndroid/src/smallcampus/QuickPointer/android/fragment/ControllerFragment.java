@@ -64,6 +64,7 @@ public class ControllerFragment extends AbstractFragment{
 				@Override
 				public void onClick(View v) {
 					//TODO page up on click
+					client.sendPageUpControl();
 					Toast.makeText(getActivity(), 
 							"btn_page_up", Toast.LENGTH_SHORT).show();
 				}});
@@ -74,6 +75,7 @@ public class ControllerFragment extends AbstractFragment{
 				@Override
 				public void onClick(View v) {
 					//TODO page down on click
+					client.sendPageDownControl();
 					Toast.makeText(getActivity(), 
 							"btn_page_down", Toast.LENGTH_SHORT).show();
 				}});

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import smallcampus.QuickPointer.net.BaseClient;
 import smallcampus.QuickPointer.net.Protocol;
+import smallcampus.QuickPointer.net.Protocol.Status;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
@@ -109,22 +110,25 @@ public class QPBluetoothClient extends BaseClient {
 
 	@Override
 	public void sendStartControl() {
-		if(isConnected){
-			try {
-				socket.getOutputStream().write(Protocol.startString.getBytes());
-				socket.getOutputStream().flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		send(Protocol.getStatusString(Status.START));
 	}
-
 	@Override
 	public void sendStopControl() {
+		send(Protocol.getStatusString(Status.STOP));
+	}
+	@Override
+	public void sendPageUpControl() {
+		send(Protocol.getStatusString(Status.PAGEUP));
+	}
+	@Override
+	public void sendPageDownControl() {
+		send(Protocol.getStatusString(Status.PAGEDOWN));
+	}
+	
+	protected void send(String msg){
 		if(isConnected){
 			try {
-				socket.getOutputStream().write(Protocol.endString.getBytes());
+				socket.getOutputStream().write(msg.getBytes());
 				socket.getOutputStream().flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -158,16 +162,4 @@ public class QPBluetoothClient extends BaseClient {
 				}
 			}
      };
-
-	@Override
-	public void sendPageUpControl() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void sendPageDownControl() {
-		// TODO Auto-generated method stub
-		
-	}
 }

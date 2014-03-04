@@ -1,8 +1,10 @@
 package smallcampus.QuickPointer;
 
+import java.awt.AWTException;
 import java.awt.EventQueue;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
-
 import smallcampus.QuickPointer.net.BaseServer;
 import smallcampus.QuickPointer.net.QPBluetoothServer;
 import smallcampus.QuickPointer.net.TCP.QPTcpUdpServer;
@@ -14,7 +16,6 @@ import smallcampus.QuickPointer.util.EventListener;
 
 public class QuickPointerApp {
         public static void main(String[] args) throws IOException{
-        	
         	//Initialize...
         	//final InitializationFrame frame = new InitializationFrame();
     		EventQueue.invokeLater(new Runnable() {
@@ -53,16 +54,41 @@ public class QuickPointerApp {
     				        	
     				        	//Create main UI
     				            QuickPointerMainFrame qp = new QuickPointerMainFrame();
-    				            final PointerPanel pointer = qp.getPointer();    
+    				            final PointerPanel pointer = qp.getPointer();
     				            //disable the pointer before connection
     				            pointer.setVisible(false);
     				            
+    				            //set up action response to coordinate data
     				            server.setOnCoordinateReceiveListener(new EventListener<float[]>(){
     								@Override
     								public void perform(float[] args) {
     									pointer.setPositionR(args[0], args[1]);
     								}
     				            });
+    				            
+    				            //set up robot for keyboard keypress simulation
+    				            try {
+									final Robot robot = new Robot();
+									
+	    				            //set up action response to control signal
+	    				            server.setOnPageUpReceiveListener(new EventListener(){
+										@Override
+										public void perform(Object args) {
+											robot.keyPress(KeyEvent.VK_PAGE_UP);
+											robot.keyRelease(KeyEvent.VK_PAGE_UP);
+										}
+	    				            });
+	    				            server.setOnPageDownReceiveListener(new EventListener(){
+										@Override
+										public void perform(Object args) {
+											robot.keyPress(KeyEvent.VK_PAGE_DOWN);
+											robot.keyRelease(KeyEvent.VK_PAGE_DOWN);
+										}
+	    				            });
+								} catch (AWTException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
     				            
     				        	//Accept connection and show main UI
     				        	server.setOnConnectionReceiveListener(new EventListener(){
