@@ -25,15 +25,16 @@ public final class QPTcpUdpClient extends BaseClient {
     
 	private DatagramSocket udpSocket;
 
+	private String hostname;
 	private InetAddress host;
     private int tcpPort, udpPort;
 
     private Thread tcpReceiveThread;
     
-	public QPTcpUdpClient(String hostname, int tcpPort, int udpPort) throws UnknownHostException, SocketException{
+	public QPTcpUdpClient(String hostname, int tcpPort, int udpPort) throws SocketException{
 		instance = this;
 		
-		host = InetAddress.getByName(hostname);
+		this.hostname = hostname;
 		this.tcpPort = tcpPort;
 		this.udpPort = udpPort;
 		
@@ -129,6 +130,8 @@ public final class QPTcpUdpClient extends BaseClient {
 		public void run() {
 
 			try {
+				host = InetAddress.getByName(hostname);
+				
 				tcpSocket.connect(new InetSocketAddress(host,tcpPort), 5000);
 				
 				

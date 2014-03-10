@@ -11,12 +11,13 @@ import javax.swing.JFrame;
 public final class QuickPointerMainFrame extends JFrame{
 	
 	private final Dimension sysDim = Toolkit.getDefaultToolkit().getScreenSize();
-	protected final PointerPanel p = new PointerPanel(sysDim.width,sysDim.height);
+	protected final PointerEngine pe;
+	protected final PointerPanel p;
     protected final int fps = 40;
 	
     public QuickPointerMainFrame(){
     	super("QuickPointer");
-    	
+    	    	
     	//hide the menu bar
         setUndecorated(true);
         
@@ -32,6 +33,9 @@ public final class QuickPointerMainFrame extends JFrame{
         setVisible(true);
         
         //set up pointer
+    	pe = new PointerEngine(5f,sysDim.width,sysDim.height);
+    	p = new PointerPanel(pe.getPointer(),sysDim.width,sysDim.height);
+
 		setGlassPane(p);
 		p.setVisible(true);
 		
@@ -40,10 +44,13 @@ public final class QuickPointerMainFrame extends JFrame{
 		repaintTimer.schedule(new TimerTask(){
 			@Override
 			public void run() {
+				pe.proceed(1000/fps);
 				p.repaint();
 			}
 		},2000,1000/fps);
     }
     
-    public PointerPanel getPointer(){return p;}
+    public PointerEngine getPointerEngine(){
+    	return pe;
+    }
 }

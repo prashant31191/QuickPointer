@@ -1,8 +1,6 @@
 package smallcampus.QuickPointer.android.fragment;
 
-import java.io.InputStream;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import smallcampus.QuickPointer.Config;
 import smallcampus.QuickPointer.android.ConnectionManager;
@@ -14,7 +12,6 @@ import smallcampus.QuickPointer.net.BaseClient;
 import smallcampus.QuickPointer.net.TCP.QPTcpUdpClient;
 import smallcampus.QuickPointer.util.EventListener;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -87,7 +84,12 @@ public class ConnectionFragment extends AbstractFragment {
 			@Override
 			public void onClick(View v) {
 				//TODO check format and connect
-				//TODO save input
+				
+				//debug mode
+				if(hostname.getText().toString().equals("debug")){
+					MainActivity.getChangeFragmentHandler().changeFragment(ControllerFragment.id);
+				}
+				
 				//Set up Connection
 				BaseClient client = null;
 				SharedPreferences.Editor editor = settings.edit();
@@ -96,8 +98,6 @@ public class ConnectionFragment extends AbstractFragment {
 				if(type.equals("TCP")){
 					try {
 						client = new QPTcpUdpClient(hostname.getText().toString(),Config.DEFAULT_TCP_SERVER_PORT,Config.DEFAULT_UDP_SERVER_PORT);
-					} catch (UnknownHostException e) {
-						Toast.makeText(getActivity(), "Unknown host", Toast.LENGTH_SHORT).show();
 					} catch (SocketException e) {
 						Toast.makeText(getActivity(), "Socket Exception", Toast.LENGTH_SHORT).show();
 					}

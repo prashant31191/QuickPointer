@@ -5,11 +5,13 @@ import java.awt.EventQueue;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+
 import smallcampus.QuickPointer.net.BaseServer;
 import smallcampus.QuickPointer.net.QPBluetoothServer;
 import smallcampus.QuickPointer.net.TCP.QPTcpUdpServer;
 import smallcampus.QuickPointer.ui.MainSetupFrame;
 import smallcampus.QuickPointer.ui.MainSetupFrame.OnServerSelectListener;
+import smallcampus.QuickPointer.ui.PointerEngine;
 import smallcampus.QuickPointer.ui.PointerPanel;
 import smallcampus.QuickPointer.ui.QuickPointerMainFrame;
 import smallcampus.QuickPointer.util.EventListener;
@@ -54,15 +56,15 @@ public class QuickPointerApp {
     				        	
     				        	//Create main UI
     				            QuickPointerMainFrame qp = new QuickPointerMainFrame();
-    				            final PointerPanel pointer = qp.getPointer();
+    				            final PointerEngine pointer = qp.getPointerEngine();
     				            //disable the pointer before connection
-    				            pointer.setVisible(false);
+    				            //pointer.setVisible(false);
     				            
     				            //set up action response to coordinate data
     				            server.setOnCoordinateReceiveListener(new EventListener<float[]>(){
     								@Override
     								public void perform(float[] args) {
-    									pointer.setPositionR(args[0], args[1]);
+    									pointer.setTarget(args);
     								}
     				            });
     				            
@@ -95,7 +97,7 @@ public class QuickPointerApp {
     								@Override
     								public void perform(Object args) {
     									window.showSucessfulCountDown();
-    									pointer.setVisible(true);
+    									//pointer.setVisible(true);
     								}
     				        	});
 

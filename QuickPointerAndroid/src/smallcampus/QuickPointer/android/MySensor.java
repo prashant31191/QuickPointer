@@ -28,7 +28,7 @@ public class MySensor {
 	 */
 	boolean isReg = false;
 	
-	final int interval = SensorManager.SENSOR_DELAY_NORMAL;
+	final int interval = Config.SENSOR_DELAY;
 	
 	/**
 	 * time interval for generating sensor results
