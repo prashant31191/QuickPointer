@@ -66,6 +66,9 @@ public abstract class BaseServer {
 			}
 			break;
 		default:
+			if(msg.startsWith("A") && onCoordinateReceive!=null){
+				onCoordinateReceive.perform(Protocol.decompileCoordinateMsg(msg));
+			}
 			break;
 		}
 		

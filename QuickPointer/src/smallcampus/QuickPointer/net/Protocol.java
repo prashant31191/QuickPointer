@@ -30,10 +30,9 @@ public class Protocol {
 			return Status.PAGEUP;
 		case "PAGEDOWN":
 			return Status.PAGEDOWN;
-		case "":
+		default:
 			return Status.READY;
 		}
-		throw new IOException("Unable to pharse Status");
 	}
 	
 	private Status status = Status.READY;
