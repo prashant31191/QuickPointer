@@ -1,5 +1,6 @@
 package smallcampus.QuickPointer.android.fragment;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -11,6 +12,7 @@ import smallcampus.QuickPointer.android.R;
 import smallcampus.QuickPointer.net.BaseClient;
 import android.content.Context;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -70,18 +72,25 @@ public class ControllerFragment extends AbstractFragment{
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 		        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-		        	float[] result = sensor.read();
+		        	float[] result;
+					try {
+						result = sensor.fastRead();
+					
 		        	
-					result[0] = (float) (90 + result[0]*180/Math.PI);
-					result[1] = (float) (result[1]*180/Math.PI);
-		        	
-		            center[0] = result[0];
-		            center[1] = result[1];
-		            
-//					Log.d(TAG, "center[0]: " +center[0]);
-//					Log.d(TAG, "center[1]: "+ center[1]);
-		        	
-					sendTask.sendFlag = true;
+						result[0] = (float) (90 + result[0]*180/Math.PI);
+						result[1] = (float) (result[1]*180/Math.PI);
+			        	
+			            center[0] = result[0];
+			            center[1] = result[1];
+			            
+	//					Log.d(TAG, "center[0]: " +center[0]);
+	//					Log.d(TAG, "center[1]: "+ center[1]);
+			        	
+						sendTask.sendFlag = true;
+					} catch (IOException e) {
+						Log.e(TAG, e.getMessage());
+						e.printStackTrace();
+					}
 		         } else if (event.getAction() == MotionEvent.ACTION_UP) {
 		            sendTask.sendFlag = false;
 		         }
@@ -119,20 +128,24 @@ public class ControllerFragment extends AbstractFragment{
 	@Override
 	public void onResume() {
 		super.onResume();
-		// register the sensor info to the progress bar UI
-		sensor.resume();
+		if(!client.isConnected()){
+			Toast.makeText(getActivity(), "Connection is lost", Toast.LENGTH_LONG).show();	
+			MainActivity.getChangeFragmentHandler().changeFragment(IntroductionFragment.id);
+		}else{
+			sensor.resume();
+		}
 	}
 
 	@Override
 	public void onPause() {
 	    super.onPause();
 	    sensor.pause();
+	    client.disconnect();
 	}
 	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-		client.disconnect();
 	}
 	
 	
@@ -142,25 +155,30 @@ public class ControllerFragment extends AbstractFragment{
 		public void run() {
 			float[] result;
 			if(sendFlag){
-				result = sensor.read();
-				
-				result[0] = (float) (90 + result[0]*180/Math.PI);
-				result[1] = (float) (result[1]*180/Math.PI);
-				
-//				Log.d(TAG, "result[0]: " +result[0]);
-//				Log.d(TAG, "result[1]: "+ result[1]);
-									
-				double adjustment = 0;
-				if(center[0]-thresholdX < 0 && result[0]>180+center[0]-thresholdX){
-					adjustment = -180;
-				}else if(center[0] + thresholdX > 180 && result[0]<center[0]-180 +thresholdX){
-					adjustment = 180;
+				try{
+					result = sensor.read();
+					
+					result[0] = (float) (90 + result[0]*180/Math.PI);
+					result[1] = (float) (result[1]*180/Math.PI);
+					
+	//				Log.d(TAG, "result[0]: " +result[0]);
+	//				Log.d(TAG, "result[1]: "+ result[1]);
+										
+					double adjustment = 0;
+					if(center[0]-thresholdX < 0 && result[0]>180+center[0]-thresholdX){
+						adjustment = -180;
+					}else if(center[0] + thresholdX > 180 && result[0]<center[0]-180 +thresholdX){
+						adjustment = 180;
+					}
+					
+					final float tempX = (float) ((result[0] -center[0] + adjustment +thresholdX)/thresholdX/2);
+					final float tempY = (float) ((-center[1]+result[1]+thresholdY)/(2*thresholdY));
+					
+					client.sendCoordinateData(Math.max(Math.min(tempX, 1), 0), Math.max(Math.min(tempY, 1), 0));
+				}catch(IOException e){
+					Log.e(TAG, e.getMessage());
+					e.printStackTrace();
 				}
-				
-				final float tempX = (float) ((result[0] -center[0] + adjustment +thresholdX)/thresholdX/2);
-				final float tempY = (float) ((-center[1]+result[1]+thresholdY)/(2*thresholdY));
-				
-				client.sendCoordinateData(Math.max(Math.min(tempX, 1), 0), Math.max(Math.min(tempY, 1), 0));
 			}
 		}
 	}

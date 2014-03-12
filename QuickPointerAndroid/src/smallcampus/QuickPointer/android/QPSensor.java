@@ -1,5 +1,6 @@
 package smallcampus.QuickPointer.android;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,44 +83,70 @@ public class QPSensor {
 		return it.next();
 	}
 	
-	public float[] read(){
+	public float[] fastRead() throws IOException{
+		float[] result = new float[2];
+		
+		if(matrixR==null){
+			throw new IOException();
+		}
+		
+		//Azimuth angle calculation
+		result[0] = (float) Math.atan((matrixR[1]-matrixR[3])/(matrixR[0]+matrixR[4]));
+		
+		//Pitch angle calculation
+		result[1] = (float) Math.asin(-matrixR[7]);
+		
+		return result;
+	}
+	
+	//read and process the data stored
+	public float[] read() throws IOException{
 		float[] result = new float[2];
 		float[] tGravity = new float[3], tMagnet = new float[3];
-		float[] tg,tm;
-		
-		//Averaging the gravity component
-		if(gravity.size()>=maxResults && magnet.size()>=maxResults){
-			List<float[]> tMagnetList = new LinkedList<float[]>();
-			//process new data
-			for(int i = 0; i<maxResults; i++){
-				tg = gravity.remove(0);
-				tm = magnet.remove(0);
-				
-				tGravity[0] += tg[0];
-				tGravity[1] += tg[1];
-				tGravity[2] += tg[2];
-				
-				tMagnetList.add(tm);
-				//tMagnet[0] += tm[0];
-				//tMagnet[1] += tm[1];
-				//tMagnet[2] += tm[2];
-			}
-			
-			tGravity[0] = tGravity[0]/maxResults;
-			tGravity[1] = tGravity[1]/maxResults;
-			tGravity[2] = tGravity[2]/maxResults;
-			
-//			tMagnet[0] = tMagnet[0]/maxResults;
-//			tMagnet[1] = tMagnet[1]/maxResults;
-//			tMagnet[2] = tMagnet[2]/maxResults;
+		float[] tg;
+		int count;
 
-			tMagnet = getMedian(tMagnetList);
-			
-			SensorManager.getRotationMatrix(matrixR, null, tGravity, tMagnet);
-		}else{
+		//check how many data available
+		if(gravity.size()<maxResults || magnet.size()<maxResults){
 			Log.d("QPSensor", "Not enough data");
-			//use the old data
 		}
+		
+		if(gravity.size()<=0 || magnet.size()<=0){
+			throw new IOException("No data available in QPSensor");
+		}
+		
+		Log.d("QPSensor", "gravity.size(): "+gravity.size());
+		Log.d("QPSensor", "magnet.size(): "+magnet.size());
+		
+		//Get the sum of gravity component
+		count = gravity.size();
+		int i =0;
+		while(i<count){
+			tg = gravity.remove(0);
+			
+			tGravity[0] += tg[0];
+			tGravity[1] += tg[1];
+			tGravity[2] += tg[2];
+			
+			i++;
+		}
+		
+		//averaging the gravity components
+		tGravity[0] = tGravity[0]/count;
+		tGravity[1] = tGravity[1]/count;
+		tGravity[2] = tGravity[2]/count;
+		
+		List<float[]> tMagnetList = new LinkedList<float[]>();
+		//get the magnet components
+		count = magnet.size();
+		while(count>0){
+			tMagnetList.add(magnet.remove(0));
+			count--;
+		}
+		//get the median of magnet components
+		tMagnet = getMedian(tMagnetList);
+		
+		SensorManager.getRotationMatrix(matrixR, null, tGravity, tMagnet);
 		
 		//Azimuth angle calculation
 		result[0] = (float) Math.atan((matrixR[1]-matrixR[3])/(matrixR[0]+matrixR[4]));
