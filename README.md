@@ -2,6 +2,15 @@ QuickPointer
 ============
 <img src="https://lh6.googleusercontent.com/-c-DEDgN1Jzo/UvetlXIR59I/AAAAAAAACE0/dgIvCAQphac/s144/QuickPointer_logo.png" height="103" width="144" />
 
+News
+-------
+
+3/10/2014 My first demo video is published on youtube.
+
+Link: http://www.youtube.com/watch?v=pl5yQD98tus
+
+--------
+
 QuickPointer is an application package written in Java which simulates a laser point on the screen of your computer and controlled by your android device via wireless channels.
 
 The basic mechanism behind is that it tracks the azimuth angle and pitch angle of your mobile, then signal the computer to draw a colored point at the corresponding position of the screen.
