@@ -9,29 +9,65 @@ News
 
 Link: http://www.youtube.com/watch?v=pl5yQD98tus
 
+Description
 --------
+The goal of this project is to provide a fun and easy to use laser pointer alternative for the public.
 
-QuickPointer is an application package written in Java which simulates a laser point on the screen of your computer and controlled by your android device via wireless channels.
+This project is written in Java and make use of the WiFi and Bluetooth wireless technology.
+Features:
 
-The basic mechanism behind is that it tracks the azimuth angle and pitch angle of your mobile, then signal the computer to draw a colored point at the corresponding position of the screen.
+1. Bluetooth or WiFi connection
 
-The package consists of a Java applet and a Android application.
+2. Motion-based pointer control
 
-Due to the bluetooth libaray problem, the Java applet support only 32 bit at the moment.
+3. Page up and page down function
 
-This project is in heavy development, it's not prepared for public release...
-There are only source codes now.
-I will keep updating week by week.
-
-Requirement: 
+User is required to have the following item:
 A computer with the following setting:
+
 1. A screen (of coz)
+
 2. Java Runtime Environment 32 bit (JRE)
-3. Network interface or Bluetooth
+
+3. Network interface or Bluetooth interface
 
 A android device with tht following setting:
+
 1. Android 3.0 or above
-2. Bluetooth or WiFi connection
+
+2. Acelerometer and Gyroscope Sensor support
+
+3. Bluetooth or WiFi connection
 
 
-By smallcampus
+
+Set up guide
+-----------------
+Reserved
+
+Credit
+---------
+Bluecove
+
+http://bluecove.org
+
+Zxing
+
+https://github.com/zxing/zxing
+
+License
+---------
+
+   Copyright 2014 Mak Ho Tin
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
