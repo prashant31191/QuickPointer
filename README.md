@@ -4,6 +4,10 @@ QuickPointer
 
 News
 -------
+3/18/2014 Second alpha release
++ Quick Start button in android so you don't need to set up connection again
++ Auto detect bluetooth setting in computer so you know if bluetooth is available.
++ More stable android sensor algorithm
 
 3/10/2014 My first demo video is published on youtube.
 
@@ -40,10 +44,15 @@ A android device with tht following setting:
 3. Bluetooth or WiFi connection
 
 
-
 Set up guide
 -----------------
-Reserved
+
+To be created...
+
+(Not sure if this is useful =p)
+For a.1
+MD5 : 3E:5D:37:21:C7:EF:6C:28:81:A7:8F:46:D5:CA:AE:5B
+SHA1: 42:C2:B0:6D:80:1E:9D:AE:AC:A3:41:45:F3:A2:DE:EF:34:CC:74:E3
 
 Credit
 ---------
