@@ -47,12 +47,25 @@ A android device with tht following setting:
 Set up guide
 -----------------
 
-To be created...
+1. Download the QuickPointerApp.jar in your laptop
 
-(Not sure if this is useful =p)
-For a.1
+2. Download the QuickPointerAndroid.apk in your android device (not necessary a phone indeed)
+
+To be continue...
+
+
+For a.1, (Not sure if this is useful =p)
+
 MD5 : 3E:5D:37:21:C7:EF:6C:28:81:A7:8F:46:D5:CA:AE:5B
+
 SHA1: 42:C2:B0:6D:80:1E:9D:AE:AC:A3:41:45:F3:A2:DE:EF:34:CC:74:E3
+
+Up coming features
+-------------------
+
+1. QR code connection setup
+
+To be continue..
 
 Credit
 ---------
