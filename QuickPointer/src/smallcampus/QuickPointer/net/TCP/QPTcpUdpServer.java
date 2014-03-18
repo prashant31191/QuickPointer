@@ -12,11 +12,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.logging.Logger;
 
 import smallcampus.QuickPointer.net.BaseServer;
 import smallcampus.QuickPointer.net.Protocol;
 
 public final class QPTcpUdpServer extends BaseServer {
+	 private static Logger LOGGER = Logger.getLogger("InfoLogging");
+	
 	private ServerSocket serverSocket;
 	
 	private Socket clientSocket;
@@ -30,7 +33,9 @@ public final class QPTcpUdpServer extends BaseServer {
 	
 	public QPTcpUdpServer(int tcpPort, int udpPort) throws IOException{	
 		serverSocket = new ServerSocket(tcpPort);
+		LOGGER.info("ServerSocket (TCP) is set up at port "+tcpPort);
 		socket = new DatagramSocket(udpPort);
+		LOGGER.info("DatagramSocket (UDP) is set up at port "+udpPort);
 		
 		//get the ip address
         try {
@@ -43,6 +48,7 @@ public final class QPTcpUdpServer extends BaseServer {
 
                 Enumeration<InetAddress> addresses = iface.getInetAddresses();
                 while(addresses.hasMoreElements()) {
+                	//TODO get the correct address, there is error now due to NetworkI like hamachi
                     InetAddress addr = addresses.nextElement();
                     ip = addr.getHostAddress();
                     if(ip.toString().length()<16){
@@ -108,9 +114,8 @@ public final class QPTcpUdpServer extends BaseServer {
 				clientSocket.close();
 				serverSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+			LOGGER.info("Sockets are closed");
 		}
 	};
 	
@@ -130,8 +135,7 @@ public final class QPTcpUdpServer extends BaseServer {
 					out.println(processMsg(fromClient));
 					
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.info(e.getMessage());
 				}
 			}
 		}
@@ -146,13 +150,14 @@ public final class QPTcpUdpServer extends BaseServer {
 					
 					System.out.println("waiting for packet...");
 					socket.receive(p); //block
+					
+					System.out.println("receive time:" +System.currentTimeMillis());
 										
 					if(onCoordinateReceive!=null){
 						onCoordinateReceive.perform(Protocol.decompileCoordinateMsg((UDPProtocol.decompilePacket(p))));
 					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.info(e.getMessage());
 				}
 			}
 		}

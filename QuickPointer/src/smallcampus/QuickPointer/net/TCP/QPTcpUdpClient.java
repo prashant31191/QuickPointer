@@ -10,7 +10,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import smallcampus.QuickPointer.net.BaseClient;
 import smallcampus.QuickPointer.net.Protocol;
@@ -59,7 +58,7 @@ public final class QPTcpUdpClient extends BaseClient {
 	public synchronized void sendCoordinateData(float x, float y) {
 		if(isConnected()){
 			//TODO data lost
-			new Thread(new UdpSend(Protocol.compileCoordinateMsg(x, y))).start();;
+			new Thread(new UdpSend(Protocol.compileCoordinateMsg(x, y))).start();
 		}
 	}
 
@@ -87,6 +86,7 @@ public final class QPTcpUdpClient extends BaseClient {
 		public void run() {
 			try {
 				udpSocket.send(p);
+				System.out.println("UDP send END:" + System.currentTimeMillis());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

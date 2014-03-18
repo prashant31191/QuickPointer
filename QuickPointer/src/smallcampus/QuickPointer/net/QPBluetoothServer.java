@@ -2,6 +2,7 @@ package smallcampus.QuickPointer.net;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.LocalDevice;
@@ -11,7 +12,9 @@ import javax.microedition.io.StreamConnectionNotifier;
 
 public class QPBluetoothServer extends BaseServer{
     static final String serverUUID = "11111111111111111111111111111123";
-	private StreamConnectionNotifier connectionNotifier;
+	static final Logger LOGGER = Logger.getLogger("InfoLogging");
+    
+    private StreamConnectionNotifier connectionNotifier;
 	private StreamConnection connection;
 	
 	@Override
@@ -19,10 +22,12 @@ public class QPBluetoothServer extends BaseServer{
 		Thread start = new Thread(new Runnable(){
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 		        try {
 					//LocalDevice.getLocalDevice().setDiscoverable(DiscoveryAgent.GIAC);
 					
+		        	LOGGER.info("Starting Bluetooth at btspp://localhost:"
+			                + serverUUID + ";name=BluetoothServerExample");
+		        	
 					connectionNotifier = (StreamConnectionNotifier) Connector.open("btspp://localhost:"
 			                + serverUUID + ";name=BluetoothServerExample");
 					
@@ -30,7 +35,7 @@ public class QPBluetoothServer extends BaseServer{
 					if(onClientConnected!=null){
 						onClientConnected.perform(null);
 					}
-			        System.out.println("Received OBEX connection ");
+			        LOGGER.info("Received OBEX connection ");
 			        
 			        Thread receive = new Thread(new Runnable(){
 						@Override
@@ -62,19 +67,17 @@ public class QPBluetoothServer extends BaseServer{
 						        stop();
 						        
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								LOGGER.info(e.getMessage());
 							}
 						}
 			        });
 			        
 			        receive.start();
 				} catch (BluetoothStateException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.info(e.getMessage());
 				}catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.info(e.getMessage());
 				}
 			}
 			
@@ -88,7 +91,7 @@ public class QPBluetoothServer extends BaseServer{
 			connection.close();
 			connectionNotifier.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.info(e.getMessage());
 		}
 	}
 
@@ -97,7 +100,7 @@ public class QPBluetoothServer extends BaseServer{
 		try {
 			return LocalDevice.getLocalDevice().getBluetoothAddress();
 		} catch (BluetoothStateException e) {
-			e.printStackTrace();
+			LOGGER.info(e.getMessage());
 		}
 		return "Bluetooth Error";
 	}

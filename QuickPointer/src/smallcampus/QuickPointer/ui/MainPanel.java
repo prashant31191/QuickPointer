@@ -7,6 +7,8 @@ import java.awt.Panel;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.LocalDevice;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -100,7 +102,14 @@ public class MainPanel extends JPanel {
 		gbc_btnNewButton.weightx = 0.5;
 		panel_1.add(tcpButton, gbc_btnNewButton);
 		
-		btButton = new JButton("Bluetooth");
+		try {
+			LocalDevice.getLocalDevice();
+			
+			btButton = new JButton("BT(Recommended)");
+		} catch (BluetoothStateException e) {
+			btButton = new JButton("BT(Not available)");
+			btButton.setEnabled(false);
+		}
 
 		GridBagConstraints gbc_btnNewButton_1 = new GridBagConstraints();
 		gbc_btnNewButton_1.gridx = 1;

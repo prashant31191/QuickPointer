@@ -13,7 +13,7 @@ public final class QuickPointerMainFrame extends JFrame{
 	private final Dimension sysDim = Toolkit.getDefaultToolkit().getScreenSize();
 	protected final PointerEngine pe;
 	protected final PointerPanel p;
-    protected final int fps = 40;
+    protected final int fps = 60;
 	
     public QuickPointerMainFrame(){
     	super("QuickPointer");
@@ -33,7 +33,7 @@ public final class QuickPointerMainFrame extends JFrame{
         setVisible(true);
         
         //set up pointer
-    	pe = new PointerEngine(5f,sysDim.width,sysDim.height);
+    	pe = new PointerEngine(10f,sysDim.width,sysDim.height);
     	p = new PointerPanel(pe.getPointer(),sysDim.width,sysDim.height);
 
 		setGlassPane(p);
