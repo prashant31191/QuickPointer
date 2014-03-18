@@ -21,8 +21,7 @@ public final class QuickPointerMainFrame extends JFrame{
     	//hide the menu bar
         setUndecorated(true);
         
-        //TODO
-        //frame.setAlwaysOnTop(true);
+        setAlwaysOnTop(true);
         
         //transparent background
         setBackground(new Color(0,0,0,0));
