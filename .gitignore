@@ -1,7 +1,8 @@
 /.metadata
 /metadata
 *.class
-.classpath
+*.classpath
+*.Log
 *~
 
 # Package Files #
