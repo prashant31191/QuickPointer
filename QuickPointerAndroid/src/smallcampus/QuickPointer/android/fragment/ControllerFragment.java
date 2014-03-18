@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import smallcampus.QuickPointer.android.Config;
 import smallcampus.QuickPointer.android.ConnectionManager;
 import smallcampus.QuickPointer.android.MainActivity;
 import smallcampus.QuickPointer.android.QPSensor;
 import smallcampus.QuickPointer.android.R;
+import smallcampus.QuickPointer.android.Setting;
 import smallcampus.QuickPointer.net.BaseClient;
 import android.content.Context;
 import android.hardware.SensorManager;
@@ -39,14 +39,11 @@ public class ControllerFragment extends AbstractFragment{
 	 * 
 	 */
 	final double[] center = new double[2];
-	final double thresholdX = Config.POINTER_THRESHOLD_X,
-			thresholdY = Config.POINTER_THRESHOLD_Y;
+	final double thresholdX = Setting.POINTER_THRESHOLD_X,
+			thresholdY = Setting.POINTER_THRESHOLD_Y;
 	
     @Override
 	protected void setUI(){
-    	//Get the connection set up-ed at the ConnectionFragment
-    	client = ConnectionManager.getInstance().getConnection();
-    	
     	//possible from debug mode
 //    	if(client==null){
 //    		//create a dummy client
@@ -63,7 +60,7 @@ public class ControllerFragment extends AbstractFragment{
 		final SendTask sendTask = new SendTask();
 		Timer sendTimer = new Timer();
 		
-		final long delay = Config.SEND_DELAY;
+		final long delay = Setting.SEND_DELAY;
 		
 		sendTimer.schedule(sendTask, 0, delay);
 		
@@ -74,11 +71,7 @@ public class ControllerFragment extends AbstractFragment{
 		        if(event.getAction() == MotionEvent.ACTION_DOWN) {
 		        	float[] result;
 					try {
-						result = sensor.fastRead();
-					
-		        	
-						result[0] = (float) (90 + result[0]*180/Math.PI);
-						result[1] = (float) (result[1]*180/Math.PI);
+						result = sensor.read();
 			        	
 			            center[0] = result[0];
 			            center[1] = result[1];
@@ -128,6 +121,10 @@ public class ControllerFragment extends AbstractFragment{
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+    	//Get the connection set up-ed at the ConnectionFragment
+    	client = ConnectionManager.getInstance().getConnection();
+		
 		if(!client.isConnected()){
 			Toast.makeText(getActivity(), "Connection is lost", Toast.LENGTH_LONG).show();	
 			MainActivity.getChangeFragmentHandler().changeFragment(IntroductionFragment.id);
@@ -158,11 +155,7 @@ public class ControllerFragment extends AbstractFragment{
 				try{
 					result = sensor.read();
 					
-					result[0] = (float) (90 + result[0]*180/Math.PI);
-					result[1] = (float) (result[1]*180/Math.PI);
-					
-	//				Log.d(TAG, "result[0]: " +result[0]);
-	//				Log.d(TAG, "result[1]: "+ result[1]);
+					Log.d(TAG, "result: ("+ result[0]+","+result[1]+")");
 										
 					double adjustment = 0;
 					if(center[0]-thresholdX < 0 && result[0]>180+center[0]-thresholdX){

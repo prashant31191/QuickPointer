@@ -23,24 +23,24 @@
 	
     <TextView
         android:id="@+id/tv_choose_connection"
-        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:paddingLeft="10dp"
-        android:text="Choose one of the below connection method:" />
+        android:text="Quick Start to use the last record" />
     
     <Button
         android:id="@+id/btn_connect_qr"
         android:layout_width="150dp"
         android:layout_height="40dp"
         android:layout_marginLeft="30dp"
-        android:text="QR Code" />
+        android:text="Quick Start" />
 
     <Button
         android:id="@+id/btn_connect_manuel"
         android:layout_width="150dp"
         android:layout_height="40dp"
         android:layout_marginLeft="30dp"
-        android:text="Manual" />
+        android:text="New Connection" />
 
 </LinearLayout>

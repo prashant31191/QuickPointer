@@ -1,11 +1,11 @@
 package smallcampus.QuickPointer.android;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
+import smallcampus.QuickPointer.util.EventListener;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,147 +21,65 @@ public class QPSensor {
 	}
 	
 	protected QPSensor(){
-		gravity = new LinkedList<float[]>();
-		magnet = new LinkedList<float[]>();
+		resultBuf = new LinkedList<float[]>();
 	}
 	
-	private float[] matrixR = new float[9];
+	private static float[] attitude = new float[3];
 	
-	private List<float[]> gravity,magnet;
-	private final int maxResults = Config.SENSOR_NUM_FRAMES;// maximum ~= 10 per 0.2 sec
+	private final static double RAD2DEG = 180 / Math.PI;
 	
-	private float[] getMedian(List<float[]> tMagnetList){
-		float count;
+	private static final float ALPHA = 0.2f;
+	
+	//Filter
+		public static float[] filter(float[] newValues, float[] previousValues) {
+			for(int i = 0; i < newValues.length; i++) {
+				previousValues[i] = previousValues[i] + ALPHA * (newValues[i] - previousValues[i]);
+			}
+			return previousValues;
+		}
+	
+	private Queue<float[]> resultBuf;
+	private final int maxResults = Setting.SENSOR_NUM_FRAMES;// maximum ~= 10 per 0.2 sec	
+	
+	public float[] read() throws IOException{
+		float[] result = new float[3]; 
+		Arrays.fill(result, 0f);
+		
 		float[] temp;
-		float[] data_array;
-		int[] index_array;
 		int i;
 		
-		Iterator<float[]> it = tMagnetList.iterator();
-		data_array = new float[tMagnetList.size()];
-		index_array = new int[tMagnetList.size()];
-		
-		for(i=0;it.hasNext();i++){
-			temp = it.next();
-			count = temp[0];
-			count+= temp[1];
-			count+= temp[2];
-			
-			//copy the data
-			data_array[i] = count;
-			//set up the index
-			index_array[i] = i;
+		if(resultBuf.size()<1){
+			throw new IOException("Sensor data null");
 		}
 		
-		//sort half of the array
-		float t;
-		int y;
-		for(i=0; i<tMagnetList.size()/2; i++){
-			int j = tMagnetList.size()-1;
-			while(j>i){
-				if(data_array[j]<data_array[j-1]){
-					t = data_array[j-1];
-					y = index_array[j-1];
-					data_array[j-1] = data_array[j];
-					index_array[j-1] = index_array[j];
-					data_array[j] = t;
-					index_array[j] = y;
-				}
-				j--;
-			}
+		for(i =0; i<resultBuf.size();i++){
+			temp = resultBuf.remove();
+			result[0] += temp[0];
+			result[1] += temp[1];
+			result[2] += temp[2];
 		}
 		
-		//get and return the result
-		it = tMagnetList.iterator();
-		i = index_array[i];
-
-		while(i>0){
-			it.next();
-			i--;
-		}
-		
-		return it.next();
-	}
-	
-	public float[] fastRead() throws IOException{
-		float[] result = new float[2];
-		
-		if(matrixR==null){
-			throw new IOException();
-		}
-		
-		//Azimuth angle calculation
-		result[0] = (float) Math.atan((matrixR[1]-matrixR[3])/(matrixR[0]+matrixR[4]));
-		
-		//Pitch angle calculation
-		result[1] = (float) Math.asin(-matrixR[7]);
+		result[0] /=i;
+		result[1] /=i;
+		result[2] /=i;
 		
 		return result;
 	}
 	
-	//read and process the data stored
-	public float[] read() throws IOException{
-		float[] result = new float[2];
-		float[] tGravity = new float[3], tMagnet = new float[3];
-		float[] tg;
-		int count;
-
-		//check how many data available
-		if(gravity.size()<maxResults || magnet.size()<maxResults){
-			Log.d("QPSensor", "Not enough data");
-		}
-		
-		if(gravity.size()<=0 || magnet.size()<=0){
-			throw new IOException("No data available in QPSensor");
-		}
-		
-		Log.d("QPSensor", "gravity.size(): "+gravity.size());
-		Log.d("QPSensor", "magnet.size(): "+magnet.size());
-		
-		//Get the sum of gravity component
-		count = gravity.size();
-		int i =0;
-		while(i<count){
-			tg = gravity.remove(0);
-			
-			tGravity[0] += tg[0];
-			tGravity[1] += tg[1];
-			tGravity[2] += tg[2];
-			
-			i++;
-		}
-		
-		//averaging the gravity components
-		tGravity[0] = tGravity[0]/count;
-		tGravity[1] = tGravity[1]/count;
-		tGravity[2] = tGravity[2]/count;
-		
-		List<float[]> tMagnetList = new LinkedList<float[]>();
-		//get the magnet components
-		count = magnet.size();
-		while(count>0){
-			tMagnetList.add(magnet.remove(0));
-			count--;
-		}
-		//get the median of magnet components
-		tMagnet = getMedian(tMagnetList);
-		
-		SensorManager.getRotationMatrix(matrixR, null, tGravity, tMagnet);
-		
-		//Azimuth angle calculation
-		result[0] = (float) Math.atan((matrixR[1]-matrixR[3])/(matrixR[0]+matrixR[4]));
-		
-		//Pitch angle calculation
-		result[1] = (float) Math.asin(-matrixR[7]);
-		
-		return result;
-	}
 	/**
 	 * Is SensorManager registered
 	 */
 	boolean isReg = false;
-			
+	
+	EventListener<float[]> onDataProduced;
+	public void setOnDataProducedListener(EventListener<float[]> listener){
+		onDataProduced = listener;
+	}
+	
     private final SensorEventListener mEventListener = new SensorEventListener() {
+    	float[] magneticField = new float[3], gravityField = new float[3];
+    	float[] matrixR = new float[9];
+    	
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
 
@@ -169,26 +87,30 @@ public class QPSensor {
             // Handle the events for which we registered
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_GRAVITY:
-            		float[] g = new float[3];
-               		System.arraycopy(event.values, 0, g, 0, 3);
-                	
-                	if(gravity.size()>=maxResults){
-                		gravity.remove(gravity.size()-1);
-                	}
-                	gravity.add(g);
-                    break;
-
+                	gravityField = filter(event.values.clone(), gravityField);
+                	break;
                 case Sensor.TYPE_MAGNETIC_FIELD:
-                	float[] m = new float[3];
-                	System.arraycopy(event.values, 0, m, 0, 3);
-                	
-                	if(magnet.size()>=maxResults){
-                		magnet.remove(magnet.size()-1);
-                	}
-                	magnet.add(m);
+                	magneticField = filter(event.values.clone(), magneticField);
                     break;
             }
-        };
+            
+            SensorManager.getRotationMatrix(matrixR, null, gravityField, magneticField);
+            
+            SensorManager.getOrientation(matrixR, attitude);
+
+			attitude[0] = (float) (attitude[0] * RAD2DEG);
+			attitude[1] = (float) (attitude[1] * RAD2DEG);
+			attitude[2] = (float) (attitude[2] * RAD2DEG);
+			
+			//Log.d("QPSensor", "("+attitude[0]+","+attitude[1]+","+attitude[2]+")");
+			
+			if(resultBuf.size()>maxResults){
+				resultBuf.remove();
+			}
+			
+			resultBuf.add(attitude);
+        }
+
     };
 	
 	//---------------------------------------
@@ -219,4 +141,5 @@ public class QPSensor {
 	
 	//----------------------------------------
 	
+
 }
